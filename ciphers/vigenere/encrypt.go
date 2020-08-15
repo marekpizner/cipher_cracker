@@ -1,0 +1,5 @@
+package vigenere
+
+func Endrypt() {
+
+}

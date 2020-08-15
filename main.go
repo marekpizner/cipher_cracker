@@ -43,8 +43,24 @@ func monoalphabeticTest() {
 
 }
 
+func generateVigenerAlphabet() []string {
+	alphabet := "!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}"
+	alphabetLength := len(alphabet)
+	var alphabets []string
+
+	for i := 0; i < alphabetLength; i++ {
+		newAlphabet := alphabet[i:] + alphabet[:i]
+		alphabets = append(alphabets, newAlphabet)
+	}
+	return alphabets
+}
+
 func main() {
 	cesarTest()
-
 	monoalphabeticTest()
+
+	alphabets := generateVigenerAlphabet()
+	for _, x := range alphabets {
+		fmt.Println(x)
+	}
 }

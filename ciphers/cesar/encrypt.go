@@ -1,19 +1,25 @@
 package cesar
 
-import "fmt"
+const ALPHABETSTART = 32
+const ALPHABETEND = 126
 
-const alphabet = []string{"a", "b"}
+func shiftEncrypt(char rune, shift int) string {
+	ascii := int(char)
+	ascii += shift
+
+	if ascii <= ALPHABETEND {
+		return string(ascii)
+	}
+
+	ascii -= ALPHABETEND
+	return string(ascii)
+}
 
 func Encrypt(text string, shift int) string {
-	new_text := ""
-
+	newText := ""
 	for _, char := range text {
-		fmt.Print(char)
-		char += 3
-		fmt.Print("->")
-		fmt.Print(char)
-		new_text = new_text + string(char)
-		fmt.Println()
+		newCharacter := shiftEncrypt(char, shift)
+		newText += newCharacter
 	}
-	return new_text
+	return newText
 }

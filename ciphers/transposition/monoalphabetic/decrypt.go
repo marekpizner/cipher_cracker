@@ -4,7 +4,7 @@ import (
 	"strings"
 )
 
-func transformDecrypt(char rune, alphabtNormal string, alphabetSecret string) string {
+func TransformDecrypt(char rune, alphabtNormal string, alphabetSecret string) string {
 	index := strings.Index(alphabetSecret, string(char))
 	decryptedCharacter := alphabtNormal[index]
 	return string(decryptedCharacter)
@@ -13,7 +13,7 @@ func transformDecrypt(char rune, alphabtNormal string, alphabetSecret string) st
 func Decrypt(text string, alphabtNormal string, alphabetSecret string) string {
 	newText := ""
 	for _, char := range text {
-		newText += transformDecrypt(char, alphabtNormal, alphabetSecret)
+		newText += TransformDecrypt(char, alphabtNormal, alphabetSecret)
 	}
 	return newText
 }

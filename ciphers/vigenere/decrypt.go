@@ -4,7 +4,7 @@ import (
 	"github.com/khan745/cipher_cracker/ciphers/transposition/monoalphabetic"
 )
 
-func transformEncrypt(char rune, alphabet []string, keyWorldCharacter rune) string {
+func transformDecrypt(char rune, alphabet []string, keyWorldCharacter rune) string {
 
 	alphabetConcrete := alphabet[0]
 	for _, i := range alphabet {
@@ -13,16 +13,16 @@ func transformEncrypt(char rune, alphabet []string, keyWorldCharacter rune) stri
 		}
 	}
 
-	encryptedCharacter := monoalphabetic.TransformEncrypt(char, alphabet[0], alphabetConcrete)
-	return encryptedCharacter
+	decryptedCharacter := monoalphabetic.TransformDecrypt(char, alphabet[0], alphabetConcrete)
+	return decryptedCharacter
 }
 
-func Encrypt(text string, alphabet []string, keyWord string) string {
+func Decrypt(text string, alphabet []string, keyWord string) string {
 	newText := ""
 	for i, char := range text {
 		keywordCharacterIndex := i % len(keyWord)
 		keywordCharacter := rune(keyWord[keywordCharacterIndex])
-		newText += transformEncrypt(char, alphabet, keywordCharacter)
+		newText += transformDecrypt(char, alphabet, keywordCharacter)
 	}
 	return newText
 }

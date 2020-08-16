@@ -4,7 +4,7 @@ import "strings"
 
 // !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}
 
-func transformEncrypt(char rune, alphabtNormal string, alphabetSecret string) string {
+func TransformEncrypt(char rune, alphabtNormal string, alphabetSecret string) string {
 	index := strings.Index(alphabtNormal, string(char))
 	encryptedCharacter := alphabetSecret[index]
 	return string(encryptedCharacter)
@@ -13,7 +13,7 @@ func transformEncrypt(char rune, alphabtNormal string, alphabetSecret string) st
 func Encrypt(text string, alphabtNormal string, alphabetSecret string) string {
 	newText := ""
 	for _, char := range text {
-		newText += transformEncrypt(char, alphabtNormal, alphabetSecret)
+		newText += TransformEncrypt(char, alphabtNormal, alphabetSecret)
 	}
 	return newText
 }

@@ -3,13 +3,12 @@ package main
 import (
 	"fmt"
 	"math/rand"
+	"regexp/syntax"
 	"time"
 
-	"github.com/khan745/cipher_cracker/ciphers/vigenere"
-
-	"github.com/khan745/cipher_cracker/ciphers/transposition/monoalphabetic"
-
 	"github.com/khan745/cipher_cracker/ciphers/cesar"
+	"github.com/khan745/cipher_cracker/ciphers/transposition/monoalphabetic"
+	"github.com/khan745/cipher_cracker/ciphers/vigenere"
 )
 
 func cesarTest() {
@@ -19,6 +18,7 @@ func cesarTest() {
 	fmt.Println("---------------------------------CESAR---------------------------------")
 	fmt.Println("Encrypted: ", enc)
 	fmt.Println("Decrypted: ", dec)
+	cesar.Crack(enc)
 }
 
 func shuffle(src string) string {
@@ -42,7 +42,6 @@ func monoalphabeticTest() {
 	fmt.Println("---------------------------------MONOALPHABETIC---------------------------------")
 	fmt.Println("Encrypted: ", enc)
 	fmt.Println("Decrypted: ", dec)
-
 }
 
 func generateVigenerAlphabet() []string {
@@ -66,6 +65,29 @@ func vigener() {
 	fmt.Println("Encrypted: ", enc)
 	fmt.Println("Decrypted: ", dec)
 
+}
+
+func foo() {
+	word1 := []rune("alpha")
+	word2 := rune('吃') // no need for array if for single rune
+	word3 := []rune("1234")
+	word4 := []rune(" $#$^@#$ ")
+
+	ok := syntax.IsWordChar(word1[0])
+
+	fmt.Printf("%v is a word ? : %v \n", string(word1), ok)
+
+	ok = syntax.IsWordChar(word2)
+
+	fmt.Printf("%v is a word ? : %v \n", string(word2), ok)
+
+	ok = syntax.IsWordChar(word3[0])
+
+	fmt.Printf("%v is a word ? : %v \n", string(word3), ok)
+
+	ok = syntax.IsWordChar(word4[0])
+
+	fmt.Printf("%v is a word ? : %v \n", string(word4), ok)
 }
 
 func main() {

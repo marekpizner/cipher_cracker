@@ -57,7 +57,7 @@ func readFile(path string) []Alphabet {
 			log.Fatal(err)
 		}
 		probability := float32(probability_value)
-		alphabet = append(alphabet, Alphabet{character: char, probability: probability})
+		alphabet = append(alphabet, Alphabet{Character: char, Probability: probability})
 	}
 	if err := scanner.Err(); err != nil {
 		log.Fatal(err)
@@ -66,6 +66,7 @@ func readFile(path string) []Alphabet {
 }
 
 func ReadFiles(path string, extension string) []Alphabet {
+	extension = "*." + extension
 	files, err := getFiles(path, extension)
 	if err != nil {
 		log.Fatal(err)

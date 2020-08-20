@@ -104,4 +104,5 @@ func main() {
 	// cesarTest(message)
 	monoalphabeticTest(message)
 	// vigener()
+	fmt.Println("asd")
 }

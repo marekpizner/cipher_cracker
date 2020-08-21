@@ -66,7 +66,7 @@ func vigener(message string) {
 	enc := vigenere.Encrypt(message, alphabets, "MORCA")
 	dec := vigenere.Decrypt(enc, alphabets, "MORCA")
 	fmt.Println("Encrypted: ", enc)
-	fmt.Println()
+	fmt.Println("  ")
 	fmt.Println("Decrypted: ", dec)
 
 }

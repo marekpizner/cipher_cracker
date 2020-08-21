@@ -17,6 +17,7 @@ func check(s string) map[rune]uint {
 	}
 	return m
 }
+
 func round(num float64) int {
 	return int(num + math.Copysign(0.5, num))
 }
@@ -44,23 +45,20 @@ func Crack(text string) {
 	})
 
 	alphabetReal := ""
-	for x, y := range alphabetRealProb {
-		fmt.Println(x, y)
-
+	for _, y := range alphabetRealProb {
+		fmt.Println(y.Character, y.Probability)
 		alphabetReal += string(y.Character)
-
 	}
 
 	alphabetSecret := ""
-	for x, y := range encryptedAlphabet {
+	for _, y := range encryptedAlphabet {
 		percentage := float64(y.Probability) / float64(len(text)) * 100
 		percentage = toFixed(percentage, 3)
-		fmt.Println(x, y.Character, percentage)
-		if y.Character != string(' ') {
-			alphabetSecret += string(y.Character)
-		}
+		fmt.Println(y.Character, percentage)
+		alphabetSecret += string(y.Character)
 	}
-
+	alphabetReal += " "
+	alphabetSecret += " "
 	fmt.Println(alphabetReal)
 	fmt.Println(alphabetSecret)
 

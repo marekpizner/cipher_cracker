@@ -37,8 +37,8 @@ func shuffle(src string) string {
 }
 
 func monoalphabeticTest(message string) {
-	alphabetNormal := "abcdefghijklmnopqrstuvwxyz"
-	alphabetSecret := string(shuffle("abcdefghijklmnopqrstuvwxyz"))
+	alphabetNormal := "abcdefghijklmnopqrstuvwxyz" + " "
+	alphabetSecret := string(shuffle("abcdefghijklmnopqrstuvwxyz")) + " "
 
 	enc := monoalphabetic.Encrypt(message, alphabetNormal, alphabetSecret)
 	dec := monoalphabetic.Decrypt(enc, alphabetNormal, alphabetSecret)
@@ -104,5 +104,4 @@ func main() {
 	// cesarTest(message)
 	monoalphabeticTest(message)
 	// vigener()
-	fmt.Println("asd")
 }

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math"
 	"sort"
+	"strings"
 
 	"github.com/khan745/cipher_cracker/language_tools"
 )
@@ -27,7 +28,7 @@ func toFixed(num float64, precision int) float64 {
 	return float64(round(num*output)) / output
 }
 
-func Crack(text string) {
+func getAlphabets(text string) (string, string) {
 	frequenties := check(text)
 	encryptedAlphabet := []language_tools.Alphabet{}
 	for i, x := range frequenties {
@@ -59,10 +60,42 @@ func Crack(text string) {
 	}
 	alphabetReal += " "
 	alphabetSecret += " "
-	fmt.Println(alphabetReal)
-	fmt.Println(alphabetSecret)
+	return alphabetReal, alphabetSecret
+}
 
-	enc := Decrypt(text, alphabetReal, alphabetSecret)
-	fmt.Println(enc)
+func calculateQuadgrams(text string) map[string]int {
+	cleanText := strings.Replace(text, " ", "", -1)
+	quadgrams := make(map[string]int)
+	maxVal := 0
+	maxStr := ""
+	for i := 0; i < len(cleanText)-4; i++ {
+		quadgram := cleanText[i : i+4]
+		if val, ok := quadgrams[quadgram]; ok {
+			quadgrams[quadgram]++
+			val++
+		} else {
+			quadgrams[quadgram] = 1
+		}
+
+		if quadgrams[quadgram] > maxVal {
+			maxVal = quadgrams[quadgram]
+			maxStr = quadgram
+		}
+
+	}
+	fmt.Println("MAX val: ", maxStr, maxVal)
+	return quadgrams
+}
+
+func Crack(text string) {
+	// alphabetReal, alphabetSecret := getAlphabets(text)
+
+	// fmt.Println(alphabetReal)
+	// fmt.Println(alphabetSecret)
+
+	// enc := Decrypt(text, alphabetReal, alphabetSecret)
+	// fmt.Println(enc)
+	quad := calculateQuadgrams(text)
+	fmt.Println(quad)
 
 }

@@ -44,6 +44,7 @@ func monoalphabeticTest(message string) {
 	dec := monoalphabetic.Decrypt(enc, alphabetNormal, alphabetSecret)
 	fmt.Println("---------------------------------MONOALPHABETIC---------------------------------")
 	fmt.Println("Encrypted: ", enc)
+	fmt.Println("  ")
 	fmt.Println("Decrypted: ", dec)
 	monoalphabetic.Crack(enc)
 }
@@ -66,9 +67,7 @@ func vigener(message string) {
 	enc := vigenere.Encrypt(message, alphabets, "MORCA")
 	dec := vigenere.Decrypt(enc, alphabets, "MORCA")
 	fmt.Println("Encrypted: ", enc)
-	fmt.Println("  ")
 	fmt.Println("Decrypted: ", dec)
-
 }
 
 func foo() {
@@ -105,4 +104,11 @@ func main() {
 	// cesarTest(message)
 	monoalphabeticTest(message)
 	// vigener()
+
+	realEnglishQuadrams := language_tools.ReadQuadrams("./english_quadgrams.txt")
+	fmt.Println(realEnglishQuadrams["TION"])
+	// for i, x := range realEnglishQuadrams {
+	// 	fmt.Println(i, x)
+	// }
+
 }

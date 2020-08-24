@@ -83,7 +83,6 @@ func calculateQuadgrams(text string) map[string]int {
 		}
 
 	}
-	fmt.Println("MAX val: ", maxStr, maxVal)
 	return quadgrams
 }
 
@@ -96,6 +95,32 @@ func Crack(text string) {
 	// enc := Decrypt(text, alphabetReal, alphabetSecret)
 	// fmt.Println(enc)
 	quad := calculateQuadgrams(text)
-	fmt.Println(quad)
+	// maxKey := ""
+	// maxValue := 0
 
+	// for i,x := range quad {
+	// 	if x > maxValue{
+	// 		maxValue = x
+	// 		maxKey = i
+	// 	}
+	// }
+
+	// fmt.Println(maxKey, quad[maxKey])
+	type kv struct {
+        Key   string
+        Value int
+	}
+	
+	var ss []kv
+	for k, v := range quad {
+		ss = append(ss, kv{k, v})
+	}
+
+	sort.Slice(ss, func(i, j int) bool {
+		return ss[i].Value > ss[j].Value
+	})
+
+	for _, kv := range ss[:10] {
+        fmt.Printf("%s, %d\n", kv.Key, kv.Value)
+    }
 }

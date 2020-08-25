@@ -54,7 +54,6 @@ func monoalphabeticTest(message string) {
 	fmt.Println("Origin text:")
 	quad := monoalphabetic.CalculateQuadgrams(message)
 
-
 	type kv struct {
         Key   string
         Value int
@@ -72,7 +71,7 @@ func monoalphabeticTest(message string) {
 	for _, kv := range ss[:10] {
         fmt.Printf("%s, %d\n", kv.Key, kv.Value)
 	}
-	fmt.Println("Encrypted: ")
+	fmt.Println("CRACK !!!!: ")
 	monoalphabetic.Crack(enc)
 }
 

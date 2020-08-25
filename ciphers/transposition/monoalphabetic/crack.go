@@ -47,7 +47,6 @@ func getAlphabets(text string) (string, string) {
 
 	alphabetReal := ""
 	for _, y := range alphabetRealProb {
-		fmt.Println(y.Character, y.Probability)
 		alphabetReal += string(y.Character)
 	}
 
@@ -55,7 +54,6 @@ func getAlphabets(text string) (string, string) {
 	for _, y := range encryptedAlphabet {
 		percentage := float64(y.Probability) / float64(len(text)) * 100
 		percentage = toFixed(percentage, 3)
-		fmt.Println(y.Character, percentage)
 		alphabetSecret += string(y.Character)
 	}
 	alphabetReal += " "
@@ -103,14 +101,17 @@ func Crack(text string) {
 	fmt.Println(alphabetReal)
 	fmt.Println(alphabetSecret)
 
-	// enc := Decrypt(text, alphabetReal, alphabetSecret)
-	// fmt.Println(enc)
+	enc := Decrypt(text, alphabetReal, alphabetSecret)
+	
+
+	encryptedQuadrams := CalculateQuadgrams(enc)
 
 	reaQuadgrams := language_tools.ReadQuadrams("./english_quadgrams.txt")
 	secQuadgrams := CalculateQuadgrams(text)
 
 	orderedRealQuadrams := orderdic(reaQuadgrams)
 	orderedSecQuadgrams := orderdic(secQuadgrams)
+	orderedEncryptedQuadrams := orderdic(encryptedQuadrams)
 
 	fmt.Println("--------------Real-------------------")
 	for _,x := range orderedRealQuadrams[:10]{
@@ -118,6 +119,10 @@ func Crack(text string) {
 	}
 	fmt.Println("--------------Sec-------------------")
 	for _,x := range orderedSecQuadgrams[:10]{
+		fmt.Println(x)
+	}
+	fmt.Println("--------------Encry-------------------")
+	for _,x := range orderedEncryptedQuadrams[:10]{
 		fmt.Println(x)
 	}
 

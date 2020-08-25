@@ -41,9 +41,13 @@ func monoalphabeticTest(message string) {
 	alphabetNormal := "abcdefghijklmnopqrstuvwxyz" + " "
 	alphabetSecret := string(shuffle("abcdefghijklmnopqrstuvwxyz")) + " "
 
+
 	enc := monoalphabetic.Encrypt(message, alphabetNormal, alphabetSecret)
 	// dec := monoalphabetic.Decrypt(enc, alphabetNormal, alphabetSecret)
 	fmt.Println("---------------------------------MONOALPHABETIC---------------------------------")
+
+	fmt.Println(alphabetNormal)
+	fmt.Println(alphabetSecret)
 	// fmt.Println("Encrypted: ", enc)
 	// fmt.Println("  ")
 	// fmt.Println("Decrypted: ", dec)

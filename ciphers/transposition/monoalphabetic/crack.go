@@ -63,11 +63,9 @@ func getAlphabets(text string) (string, string) {
 	return alphabetReal, alphabetSecret
 }
 
-func calculateQuadgrams(text string) map[string]int {
+func CalculateQuadgrams(text string) map[string]int {
 	cleanText := strings.Replace(text, " ", "", -1)
 	quadgrams := make(map[string]int)
-	maxVal := 0
-	maxStr := ""
 	for i := 0; i < len(cleanText)-4; i++ {
 		quadgram := cleanText[i : i+4]
 		if val, ok := quadgrams[quadgram]; ok {
@@ -76,12 +74,6 @@ func calculateQuadgrams(text string) map[string]int {
 		} else {
 			quadgrams[quadgram] = 1
 		}
-
-		if quadgrams[quadgram] > maxVal {
-			maxVal = quadgrams[quadgram]
-			maxStr = quadgram
-		}
-
 	}
 	return quadgrams
 }
@@ -94,7 +86,7 @@ func Crack(text string) {
 
 	// enc := Decrypt(text, alphabetReal, alphabetSecret)
 	// fmt.Println(enc)
-	quad := calculateQuadgrams(text)
+	quad := CalculateQuadgrams(text)
 	// maxKey := ""
 	// maxValue := 0
 

@@ -78,6 +78,24 @@ func CalculateQuadgrams(text string) map[string]int {
 	return quadgrams
 }
 
+type kv struct {
+	Key   string
+	Value int
+}
+
+func orderdic(data map[string]int) []kv{
+	var ss []kv
+	for k, v := range data {
+		ss = append(ss, kv{k, v})
+	}
+
+	sort.Slice(ss, func(i, j int) bool {
+		return ss[i].Value > ss[j].Value
+	})
+
+	return ss
+}
+
 func Crack(text string) {
 	// alphabetReal, alphabetSecret := getAlphabets(text)
 
@@ -86,33 +104,21 @@ func Crack(text string) {
 
 	// enc := Decrypt(text, alphabetReal, alphabetSecret)
 	// fmt.Println(enc)
-	quad := CalculateQuadgrams(text)
-	// maxKey := ""
-	// maxValue := 0
 
-	// for i,x := range quad {
-	// 	if x > maxValue{
-	// 		maxValue = x
-	// 		maxKey = i
-	// 	}
-	// }
+	reaQuadgrams := language_tools.ReadQuadrams("./english_quadgrams.txt")
+	secQuadgrams := CalculateQuadgrams(text)
 
-	// fmt.Println(maxKey, quad[maxKey])
-	type kv struct {
-        Key   string
-        Value int
+	orderedRealQuadrams := orderdic(reaQuadgrams)
+	orderedSecQuadgrams := orderdic(secQuadgrams)
+
+	fmt.Println("--------------Real-------------------")
+	for _,x := range orderedRealQuadrams[:10]{
+		fmt.Println(x)
 	}
+	fmt.Println("--------------Sec-------------------")
+	for _,x := range orderedSecQuadgrams[:10]{
+		fmt.Println(x)
+	}
+
 	
-	var ss []kv
-	for k, v := range quad {
-		ss = append(ss, kv{k, v})
-	}
-
-	sort.Slice(ss, func(i, j int) bool {
-		return ss[i].Value > ss[j].Value
-	})
-
-	for _, kv := range ss[:10] {
-        fmt.Printf("%s, %d\n", kv.Key, kv.Value)
-    }
 }

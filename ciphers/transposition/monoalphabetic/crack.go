@@ -97,10 +97,11 @@ func orderdic(data map[string]int) []kv{
 }
 
 func Crack(text string) {
-	// alphabetReal, alphabetSecret := getAlphabets(text)
+	alphabetReal, alphabetSecret := getAlphabets(text)
 
-	// fmt.Println(alphabetReal)
-	// fmt.Println(alphabetSecret)
+	fmt.Println("-----------GuestAlphabet------------")
+	fmt.Println(alphabetReal)
+	fmt.Println(alphabetSecret)
 
 	// enc := Decrypt(text, alphabetReal, alphabetSecret)
 	// fmt.Println(enc)

@@ -27,7 +27,7 @@ func parseQuadrans(fileContent string) (map[string]int, int) {
 	return quadgrams, maxValue
 }
 
-func ReadQuadrams(path string) map[string]int {
+func ReadQuadrams(path string) map[string]float64 {
 	file, err := os.Open(path)
 	if err != nil {
 		log.Fatal(err)
@@ -35,12 +35,12 @@ func ReadQuadrams(path string) map[string]int {
 	defer file.Close()
 	b, err := ioutil.ReadAll(file)
 	bString := string(b)
-	parsedQuadrants, _ := parseQuadrans(bString)
-	newParsedQuadgram := make(map[string]int)
+	parsedQuadrants, maxValue := parseQuadrans(bString)
+	newParsedQuadgram := make(map[string]float64)
 
 	for key, value := range parsedQuadrants {
-		// newValue := float64(value) / float64(maxValue) * 100
-		newParsedQuadgram[key] = value
+		newValue := float64(value) / float64(maxValue) * 100
+		newParsedQuadgram[key] = newValue
 		// fmt.Println(key, newValue)
 	}
 	return newParsedQuadgram

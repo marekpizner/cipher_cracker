@@ -62,9 +62,9 @@ func getAlphabets(text string) (string, string) {
 	return alphabetReal, alphabetSecret
 }
 
-func CalculateQuadgrams(text string) map[string]int {
+func CalculateQuadgrams(text string) map[string]float64 {
 	cleanText := strings.Replace(text, " ", "", -1)
-	quadgrams := make(map[string]int)
+	quadgrams := make(map[string]float64)
 	for i := 0; i < len(cleanText)-4; i++ {
 		quadgram := cleanText[i : i+4]
 		if val, ok := quadgrams[quadgram]; ok {
@@ -79,11 +79,11 @@ func CalculateQuadgrams(text string) map[string]int {
 
 type kv struct {
 	Key   string
-	Value int
+	Value float64
 }
 
 
-func orderdic(data map[string]int) []kv{
+func orderdic(data map[string]float64) []kv{
 	var ss []kv
 	for k, v := range data {
 		ss = append(ss, kv{k, v})
@@ -118,46 +118,76 @@ func shuffle(src string) string {
 	return string(final)
 }
 
+func findIndexOfString(str string, char rune) int{
+	for i,x := range str {
+		if string(x) == string(char){
+			return i
+		}
+	}
+	return -1
+}
+
+func swapCharactersInAlphabet(alphabet string, char1, char2 rune) string{
+	newAlphabet := []rune(alphabet)
+	index1 := findIndexOfString(alphabet, char1)
+	index2 := findIndexOfString(alphabet, char2)
+	newAlphabet[index1], newAlphabet[index2] = newAlphabet[index2], newAlphabet[index1]
+	return string(newAlphabet)
+}
+
+func swapAlphabetByQuadgrams(alphabet, q1, q2 string) string{
+	newAlphabet := alphabet
+	for i:=0;i<len(q1);i++{
+		char1 := rune(q1[i])
+		char2 := rune(q2[i])
+
+		newAlphabet = swapCharactersInAlphabet(newAlphabet, char1, char2)
+	}
+	return newAlphabet
+}
+
+
 func Crack(text string) {
 	alphabetReal, alphabetSecret := getAlphabets(text)
 	reaQuadgrams := language_tools.ReadQuadrams("./english_quadgrams.txt")
-	// orderedRealQuadrams := orderdic(reaQuadgrams)
+	secretQuadgrams := CalculateQuadgrams(text)
+	secretQuadgramsOrdered := orderdic(secretQuadgrams)
 
-	// fmt.Println("-----------GuestAlphabet------------")
-	// fmt.Println(alphabetReal)
-	// fmt.Println(alphabetSecret)
-	// fmt.Println("--------------Real-------------------")
-	// for _,x := range orderedRealQuadrams[:10]{
-	// 	fmt.Println(x)
-	// }
-
-	old_score := 0
-
-	for i:=0; i<1000;i++{
-		alphabetSecret = string(shuffle(alphabetSecret))
-		enc := Decrypt(text, alphabetReal, alphabetSecret)
-
+	bestScore := 0.0
+	bestAlphabet := alphabetSecret
+	alphabetSecretNew := alphabetSecret
+	j := 0
+	for i:=0; i<10;i++{
+		
+		enc := Decrypt(text, alphabetReal, alphabetSecretNew)
 		encryptedQuadrams := CalculateQuadgrams(enc)
-		// orderedEncryptedQuadrams := orderdic(encryptedQuadrams)
+		encryptedQuadramsorderes := orderdic(encryptedQuadrams)
 
-		score := 0
+		score := 0.0
 		// fmt.Println(len(encryptedQuadrams))
 		for key_e, _ := range encryptedQuadrams{
-			for key_r, _ := range reaQuadgrams{
-				if compareQuadgrams(key_e, key_r) == 1.0 {
-					// fmt.Println(key_e,key_r, value_e, value_r)
-					score++
-				}
+			if value_r, ok := reaQuadgrams[key_e]; ok {
+				score +=  value_r
 			}
 		}
-
 	
-		if score > old_score {
-			old_score = score
-			fmt.Print("\033[u\033[K")
-			fmt.Println(old_score, alphabetSecret)
+		if score > bestScore {
+			// fmt.Print("\033[G\033[K")
+			bestScore = score
+			bestAlphabet = alphabetSecretNew
+			fmt.Println(bestAlphabet, bestScore)
+			// fmt.Print("\033[A") 
 		}
+
+		key1 := secretQuadgramsOrdered[j].Key
+		key2 := strings.ToLower(encryptedQuadramsorderes[i].Key)
+		// fmt.Println(key1, key2)
+		alphabetSecretNew = swapAlphabetByQuadgrams(alphabetSecretNew, key1, key2)
+		fmt.Println(alphabetSecretNew)
+			
+		
+		
+
 	}	
 
-	fmt.Println(alphabetSecret)
 }

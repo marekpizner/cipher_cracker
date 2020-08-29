@@ -8,7 +8,6 @@ import (
 	"os"
 	"strings"
 	"time"
-	"sort"
 
 	"github.com/khan745/cipher_cracker/language_tools"
 
@@ -51,26 +50,6 @@ func monoalphabeticTest(message string) {
 	// fmt.Println("Encrypted: ", enc)
 	// fmt.Println("  ")
 	// fmt.Println("Decrypted: ", dec)
-	fmt.Println("Origin text:")
-	quad := monoalphabetic.CalculateQuadgrams(message)
-
-	type kv struct {
-        Key   string
-        Value int
-	}
-	
-	var ss []kv
-	for k, v := range quad {
-		ss = append(ss, kv{k, v})
-	}
-
-	sort.Slice(ss, func(i, j int) bool {
-		return ss[i].Value > ss[j].Value
-	})
-
-	for _, kv := range ss[:10] {
-        fmt.Printf("%s, %d\n", kv.Key, kv.Value)
-	}
 	fmt.Println("CRACK !!!!: ")
 	monoalphabetic.Crack(enc)
 }

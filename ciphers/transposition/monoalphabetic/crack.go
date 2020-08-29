@@ -5,7 +5,8 @@ import (
 	"math"
 	"sort"
 	"strings"
-
+	"math/rand"
+	"time"
 	"github.com/khan745/cipher_cracker/language_tools"
 )
 
@@ -81,6 +82,7 @@ type kv struct {
 	Value int
 }
 
+
 func orderdic(data map[string]int) []kv{
 	var ss []kv
 	for k, v := range data {
@@ -94,37 +96,68 @@ func orderdic(data map[string]int) []kv{
 	return ss
 }
 
+func compareQuadgrams(q1, q2 string) float64{
+	lngth := int(math.Min(float64(len(q1)), float64(len(q2))))
+	score := 0
+	for i :=0; i<lngth; i++ {
+		if q1[i] == q2[i]{
+			score++
+		}
+	}
+	return float64(score)/float64(lngth)
+}
+
+func shuffle(src string) string {
+	final := []byte(src)
+	rand.Seed(time.Now().UTC().UnixNano())
+	perm := rand.Perm(len(src))
+
+	for i, v := range perm {
+		final[v] = src[i]
+	}
+	return string(final)
+}
+
 func Crack(text string) {
 	alphabetReal, alphabetSecret := getAlphabets(text)
-
-	fmt.Println("-----------GuestAlphabet------------")
-	fmt.Println(alphabetReal)
-	fmt.Println(alphabetSecret)
-
-	enc := Decrypt(text, alphabetReal, alphabetSecret)
-	
-
-	encryptedQuadrams := CalculateQuadgrams(enc)
-
 	reaQuadgrams := language_tools.ReadQuadrams("./english_quadgrams.txt")
-	secQuadgrams := CalculateQuadgrams(text)
+	// orderedRealQuadrams := orderdic(reaQuadgrams)
 
-	orderedRealQuadrams := orderdic(reaQuadgrams)
-	orderedSecQuadgrams := orderdic(secQuadgrams)
-	orderedEncryptedQuadrams := orderdic(encryptedQuadrams)
+	// fmt.Println("-----------GuestAlphabet------------")
+	// fmt.Println(alphabetReal)
+	// fmt.Println(alphabetSecret)
+	// fmt.Println("--------------Real-------------------")
+	// for _,x := range orderedRealQuadrams[:10]{
+	// 	fmt.Println(x)
+	// }
 
-	fmt.Println("--------------Real-------------------")
-	for _,x := range orderedRealQuadrams[:10]{
-		fmt.Println(x)
-	}
-	fmt.Println("--------------Sec-------------------")
-	for _,x := range orderedSecQuadgrams[:10]{
-		fmt.Println(x)
-	}
-	fmt.Println("--------------Encry-------------------")
-	for _,x := range orderedEncryptedQuadrams[:10]{
-		fmt.Println(x)
-	}
+	old_score := 0
+
+	for i:=0; i<1000;i++{
+		alphabetSecret = string(shuffle(alphabetSecret))
+		enc := Decrypt(text, alphabetReal, alphabetSecret)
+
+		encryptedQuadrams := CalculateQuadgrams(enc)
+		// orderedEncryptedQuadrams := orderdic(encryptedQuadrams)
+
+		score := 0
+		// fmt.Println(len(encryptedQuadrams))
+		for key_e, _ := range encryptedQuadrams{
+			for key_r, _ := range reaQuadgrams{
+				if compareQuadgrams(key_e, key_r) == 1.0 {
+					// fmt.Println(key_e,key_r, value_e, value_r)
+					score++
+				}
+			}
+		}
 
 	
+		if score > old_score {
+			old_score = score
+			fmt.Print("\033[u\033[K")
+			fmt.Println(old_score, alphabetSecret)
+		}
+	}	
+
+	fmt.Println(alphabetSecret)
 }

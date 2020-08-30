@@ -65,7 +65,7 @@ func getAlphabets(text string) (string, string) {
 func CalculateQuadgrams(text string) map[string]float64 {
 	cleanText := strings.Replace(text, " ", "", -1)
 	quadgrams := make(map[string]float64)
-	for i := 0; i < len(cleanText)-4; i++ {
+	for i := 0; i < len(cleanText)-4; i+=1 {
 		quadgram := cleanText[i : i+4]
 		if val, ok := quadgrams[quadgram]; ok {
 			quadgrams[quadgram]++
@@ -96,18 +96,10 @@ func orderdic(data map[string]float64) []kv{
 	return ss
 }
 
-func compareQuadgrams(q1, q2 string) float64{
-	lngth := int(math.Min(float64(len(q1)), float64(len(q2))))
-	score := 0
-	for i :=0; i<lngth; i++ {
-		if q1[i] == q2[i]{
-			score++
-		}
-	}
-	return float64(score)/float64(lngth)
-}
+
 
 func shuffle(src string) string {
+	src = strings.ReplaceAll(src, " ", "")
 	final := []byte(src)
 	rand.Seed(time.Now().UTC().UnixNano())
 	perm := rand.Perm(len(src))
@@ -115,7 +107,7 @@ func shuffle(src string) string {
 	for i, v := range perm {
 		final[v] = src[i]
 	}
-	return string(final)
+	return string(final) + " "
 }
 
 func findIndexOfString(str string, char rune) int{
@@ -132,62 +124,83 @@ func swapCharactersInAlphabet(alphabet string, char1, char2 rune) string{
 	index1 := findIndexOfString(alphabet, char1)
 	index2 := findIndexOfString(alphabet, char2)
 	newAlphabet[index1], newAlphabet[index2] = newAlphabet[index2], newAlphabet[index1]
+	// fmt.Println(alphabet, string(char1), string(char2), string(newAlphabet))
 	return string(newAlphabet)
 }
 
-func swapAlphabetByQuadgrams(alphabet, q1, q2 string) string{
-	newAlphabet := alphabet
-	for i:=0;i<len(q1);i++{
-		char1 := rune(q1[i])
-		char2 := rune(q2[i])
-
-		newAlphabet = swapCharactersInAlphabet(newAlphabet, char1, char2)
-	}
-	return newAlphabet
-}
-
-
-func Crack(text string) {
-	alphabetReal, alphabetSecret := getAlphabets(text)
-	reaQuadgrams := language_tools.ReadQuadrams("./english_quadgrams.txt")
-	secretQuadgrams := CalculateQuadgrams(text)
-	secretQuadgramsOrdered := orderdic(secretQuadgrams)
-
-	bestScore := 0.0
+func calculateLocalMaximum(text, alphabetReal, alphabetSecret string, reaQuadgrams map[string]float64) (int, string){
+	maxFitnes := 0
 	bestAlphabet := alphabetSecret
 	alphabetSecretNew := alphabetSecret
-	j := 0
-	for i:=0; i<10;i++{
-		
-		enc := Decrypt(text, alphabetReal, alphabetSecretNew)
-		encryptedQuadrams := CalculateQuadgrams(enc)
-		encryptedQuadramsorderes := orderdic(encryptedQuadrams)
 
-		score := 0.0
-		// fmt.Println(len(encryptedQuadrams))
-		for key_e, _ := range encryptedQuadrams{
-			if value_r, ok := reaQuadgrams[key_e]; ok {
-				score +=  value_r
+	for i:=0; i<len(alphabetReal)-1;i++{
+		for j:=i+1; j<len(alphabetReal);j++{
+
+			char1 := rune(bestAlphabet[i])
+			char2 := rune(bestAlphabet[j])
+			
+			alphabetSecretNew = swapCharactersInAlphabet(bestAlphabet, char1, char2)
+
+
+			enc := Decrypt(text, alphabetReal, alphabetSecretNew)
+			encryptedQuadrams := CalculateQuadgrams(enc)
+			tmpFitnes := 0
+			for key_e, _ := range encryptedQuadrams{
+				if value_r, ok := reaQuadgrams[key_e]; ok {
+					tmpFitnes += int(value_r)
+				}
+			}
+
+			if tmpFitnes > maxFitnes {
+				maxFitnes = tmpFitnes
+				bestAlphabet = alphabetSecretNew
+				// fmt.Println(bestAlphabet, maxFitnes)
+			}else{
+				alphabetSecretNew = swapCharactersInAlphabet(bestAlphabet, char1, char2)
 			}
 		}
+	}
+	return maxFitnes, bestAlphabet
+}
+
+func Crack(text string) {
+	reaQuadgrams := language_tools.ReadQuadrams("./english_quadgrams.txt")
+	alphabetReal, alphabetSecret := getAlphabets(text)
+
+	alphabetSecret = strings.ReplaceAll(alphabetSecret, " ", "")
+	alphabetReal = strings.ReplaceAll(alphabetReal, " ", "")
+
+	bestScore := 0
+	bestScoreHits := 0
+	consolidate := 2
+
+	bestAlphabet := alphabetSecret
+	alphabetSecretNew := alphabetSecret
+
+	fmt.Println(alphabetSecret)
 	
-		if score > bestScore {
-			// fmt.Print("\033[G\033[K")
-			bestScore = score
-			bestAlphabet = alphabetSecretNew
-			fmt.Println(bestAlphabet, bestScore)
-			// fmt.Print("\033[A") 
-		}
+	for i:=0; i<1000;i++{
+			alphabetSecretNew = shuffle(alphabetSecret)
+			// fmt.Println(alphabetSecretNew)
+			score, alphabetSecretNew := calculateLocalMaximum(text,alphabetReal,alphabetSecretNew,reaQuadgrams)
 
-		key1 := secretQuadgramsOrdered[j].Key
-		key2 := strings.ToLower(encryptedQuadramsorderes[i].Key)
-		// fmt.Println(key1, key2)
-		alphabetSecretNew = swapAlphabetByQuadgrams(alphabetSecretNew, key1, key2)
-		fmt.Println(alphabetSecretNew)
-			
-		
-		
+			if score > bestScore {
+				// fmt.Print("\033[G\033[K")
+				bestScore = score
+				bestAlphabet = alphabetSecretNew
+				fmt.Println(bestAlphabet, bestScore)
+				// fmt.Print("\033[A") 
+			}else if score == bestScore {
+				bestScoreHits ++
+				if bestScoreHits == consolidate{
+					break
+				}
+			}
+	}
 
-	}	
+	enc := Decrypt(text, alphabetReal, bestAlphabet)
+	fmt.Println(strings.ToLower(alphabetReal))
+	fmt.Println(bestAlphabet)
+	fmt.Println(enc)
 
 }

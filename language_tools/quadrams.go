@@ -40,7 +40,7 @@ func ReadQuadrams(path string) map[string]float64 {
 
 	for key, value := range parsedQuadrants {
 		newValue := float64(value) / float64(maxValue) * 100
-		newParsedQuadgram[key] = newValue
+		newParsedQuadgram[strings.ToLower(key)] = newValue
 		// fmt.Println(key, newValue)
 	}
 	return newParsedQuadgram

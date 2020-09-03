@@ -39,18 +39,20 @@ func shuffle(src string) string {
 func monoalphabeticTest(message string) {
 	alphabetNormal := "abcdefghijklmnopqrstuvwxyz" + " "
 	alphabetSecret := string(shuffle("abcdefghijklmnopqrstuvwxyz")) + " "
+	realQuadgrams := language_tools.ReadQuadramsFromFile("./english_quadgrams.txt")
+	alphabetNormalProb := language_tools.ReadFiles("./alphabets", "csv")
 
 	enc := monoalphabetic.Encrypt(message, alphabetNormal, alphabetSecret)
-	// dec := monoalphabetic.Decrypt(enc, alphabetNormal, alphabetSecret)
+	dec := monoalphabetic.Decrypt(enc, alphabetNormal, alphabetSecret)
 	fmt.Println("---------------------------------MONOALPHABETIC---------------------------------")
 
 	fmt.Println(alphabetNormal)
 	fmt.Println(alphabetSecret)
-	// fmt.Println("Encrypted: ", enc)
-	// fmt.Println("  ")
-	// fmt.Println("Decrypted: ", dec)
-	fmt.Println("CRACK !!!!: ")
-	monoalphabetic.Crack(enc)
+	fmt.Println("Encrypted: ", enc)
+	fmt.Println("  ")
+	fmt.Println("Decrypted: ", dec)
+	fmt.Println("Cracking !!!!: ")
+	monoalphabetic.Crack(enc, alphabetNormal, realQuadgrams, alphabetNormalProb)
 }
 
 func generateVigenerAlphabet() []string {
@@ -67,9 +69,10 @@ func generateVigenerAlphabet() []string {
 
 func vigener(message string) {
 	alphabets := generateVigenerAlphabet()
+	keyWord := "MORCA"
 	fmt.Println("---------------------------------VINEGER---------------------------------")
-	enc := vigenere.Encrypt(message, alphabets, "MORCA")
-	dec := vigenere.Decrypt(enc, alphabets, "MORCA")
+	enc := vigenere.Encrypt(message, alphabets, keyWord)
+	dec := vigenere.Decrypt(enc, alphabets, keyWord)
 	fmt.Println("Encrypted: ", enc)
 	fmt.Println("Decrypted: ", dec)
 }

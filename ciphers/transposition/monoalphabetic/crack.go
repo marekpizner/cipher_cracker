@@ -3,10 +3,8 @@ package monoalphabetic
 import (
 	"fmt"
 	"math"
-	"math/rand"
 	"sort"
 	"strings"
-	"time"
 
 	"github.com/khan745/cipher_cracker/language_tools"
 )
@@ -32,27 +30,24 @@ func toFixed(num float64, precision int) float64 {
 	return float64(round(num*output)) / output
 }
 
-func sortAlphabet(aNormal, aSecret string) (string, string) {
-	alphabetNormal := "abcdefghijklmnopqrstuvwxyz"
+func sortAlphabet(aNormal, aSecret, alphabetNormal string) (string, string) {
 	secretAlphabet := ""
 	for _, x := range alphabetNormal {
-		index := findIndexOfString(aNormal, x)
+		index := language_tools.FindIndexOfString(aNormal, x)
 		secretAlphabet += string(aSecret[index])
 	}
 	return alphabetNormal, secretAlphabet
 }
 
-func getAlphabets(text string) (string, string) {
-	frequenties := check(text)
+func getAlphabetsOrderProbability(textSecret, alphabetNormal string, alphabetNormalProbability []language_tools.Alphabet) (string, string) {
+	frequenties := check(textSecret)
 	encryptedAlphabet := []language_tools.Alphabet{}
 	for i, x := range frequenties {
 		encryptedAlphabet = append(encryptedAlphabet, language_tools.Alphabet{Character: string(i), Probability: float32(x)})
 	}
 
-	alphabetRealProb := language_tools.ReadFiles("./alphabets", "csv")
-
-	sort.Slice(alphabetRealProb, func(i, j int) bool {
-		return alphabetRealProb[i].Probability > alphabetRealProb[j].Probability
+	sort.Slice(alphabetNormalProbability, func(i, j int) bool {
+		return alphabetNormalProbability[i].Probability > alphabetNormalProbability[j].Probability
 	})
 
 	sort.Slice(encryptedAlphabet, func(i, j int) bool {
@@ -60,122 +55,71 @@ func getAlphabets(text string) (string, string) {
 	})
 
 	alphabetReal := ""
-	for _, y := range alphabetRealProb {
+	for _, y := range alphabetNormalProbability {
 		alphabetReal += strings.ToLower(string(y.Character))
 	}
 
 	alphabetSecret := ""
 	for _, y := range encryptedAlphabet {
-		percentage := float64(y.Probability) / float64(len(text)) * 100
+		percentage := float64(y.Probability) / float64(len(textSecret)) * 100
 		percentage = toFixed(percentage, 3)
 		alphabetSecret += string(y.Character)
 	}
-	alphabetReal, alphabetSecret = sortAlphabet(alphabetReal, alphabetSecret)
+	alphabetReal, alphabetSecret = sortAlphabet(alphabetReal, alphabetSecret, alphabetNormal)
 	return alphabetReal, alphabetSecret
 }
 
-func CalculateQuadgrams(text string) map[string]float64 {
-	cleanText := strings.Replace(text, " ", "", -1)
-	quadgrams := make(map[string]float64)
-	for i := 0; i < len(cleanText)-4; i += 1 {
-		quadgram := cleanText[i : i+4]
-		if val, ok := quadgrams[quadgram]; ok {
-			quadgrams[quadgram]++
-			val++
-		} else {
-			quadgrams[quadgram] = 1
-		}
-	}
-	return quadgrams
-}
-
-func shuffle(src string) string {
-	src = strings.ReplaceAll(src, " ", "")
-	final := []byte(src)
-	rand.Seed(time.Now().UTC().UnixNano())
-	perm := rand.Perm(len(src))
-
-	for i, v := range perm {
-		final[v] = src[i]
-	}
-	return string(final) + " "
-}
-
-func findIndexOfString(str string, char rune) int {
-	for i, x := range str {
-		if string(x) == string(char) {
-			return i
-		}
-	}
-	return -1
-}
-
-func swapCharactersInAlphabet(alphabet string, char1, char2 rune) string {
-	newAlphabet := []rune(alphabet)
-	index1 := findIndexOfString(alphabet, char1)
-	index2 := findIndexOfString(alphabet, char2)
-	newAlphabet[index1], newAlphabet[index2] = newAlphabet[index2], newAlphabet[index1]
-	// fmt.Println(alphabet, string(char1), string(char2), string(newAlphabet))
-	return string(newAlphabet)
-}
-
-func calculateLocalMaximum(text, alphabetReal, alphabetSecret string, reaQuadgrams map[string]float64) (int, string) {
+func calculateLocalMaximum(textSecret, alphabetReal, alphabetSecret string, reaQuadgrams map[string]float64, repeatIterations int) (int, string) {
 	maxFitnes := 0
 	bestAlphabet := alphabetSecret
 	alphabetSecretNew := alphabetSecret
 
-	for c := 0; c < 1; c++ {
+	for c := 0; c < repeatIterations; c++ {
 		for i := 0; i < len(alphabetSecret)-1; i++ {
 			for j := i + 1; j < len(alphabetSecret); j++ {
 
-				enc := Decrypt(text, alphabetReal, alphabetSecretNew)
-				encryptedQuadrams := CalculateQuadgrams(enc)
+				enc := Decrypt(textSecret, alphabetReal, alphabetSecretNew)
+				encryptedQuadrams := language_tools.CalculateQuadgrams(enc)
 				tmpFitnes := 0
-				for key_e, _ := range encryptedQuadrams {
-					if value_r, ok := reaQuadgrams[key_e]; ok {
-						tmpFitnes += int(value_r)
+				for keyE, _ := range encryptedQuadrams {
+					if valueR, ok := reaQuadgrams[keyE]; ok {
+						tmpFitnes += int(valueR)
 					}
 				}
 				if tmpFitnes > maxFitnes {
 					maxFitnes = tmpFitnes
 					bestAlphabet = alphabetSecretNew
-					// fmt.Println(bestAlphabet, maxFitnes)
 				}
 
 				char1 := rune(bestAlphabet[i])
 				char2 := rune(bestAlphabet[j])
 
-				alphabetSecretNew = swapCharactersInAlphabet(bestAlphabet, char1, char2)
+				alphabetSecretNew = language_tools.SwapCharactersInAlphabet(bestAlphabet, char1, char2)
 			}
 		}
 	}
 	return maxFitnes, bestAlphabet
 }
 
-func Crack(text string) {
-	reaQuadgrams := language_tools.ReadQuadrams("./english_quadgrams.txt")
-	alphabetReal, alphabetSecret := getAlphabets(text)
+func Crack(textSecret, alphabetNormal string, realQuadgrams map[string]float64, alphabetNormalProbability []language_tools.Alphabet) string {
+	textSecret = strings.ToLower(textSecret)
+	alphabetNormal = strings.ToLower(alphabetNormal)
+	alphabetNormal = strings.ReplaceAll(alphabetNormal, " ", "")
+	alphabetNormal, alphabetSecret := getAlphabetsOrderProbability(textSecret, alphabetNormal, alphabetNormalProbability)
 
 	bestScore := 0
 	bestScoreHits := 0
 	consolidate := 2
+	repeatIterations := 1
 
 	bestAlphabet := alphabetSecret
 
-	fmt.Println(alphabetReal)
-	fmt.Println(alphabetSecret)
-	fmt.Println("---------GUES----------")
-
 	for i := 0; i < 1000; i++ {
 
-		score, alphabetSecretNew := calculateLocalMaximum(text, alphabetReal, bestAlphabet, reaQuadgrams)
-		fmt.Println(score)
+		score, alphabetSecretNew := calculateLocalMaximum(textSecret, alphabetNormal, bestAlphabet, realQuadgrams, repeatIterations)
 		if score > bestScore {
-			// fmt.Print("\033[G\033[K")
 			bestScore = score
 			bestAlphabet = alphabetSecretNew
-			fmt.Println(bestAlphabet, bestScore)
-			// fmt.Print("\033[A")
 		} else if score == bestScore && score != 0 {
 			bestScoreHits++
 			if bestScoreHits == consolidate {
@@ -185,9 +129,10 @@ func Crack(text string) {
 		}
 	}
 
-	enc := Decrypt(text, alphabetReal, bestAlphabet)
-	fmt.Println(strings.ToLower(alphabetReal))
+	enc := Decrypt(textSecret, alphabetNormal, bestAlphabet)
+	fmt.Println(strings.ToLower(alphabetNormal))
 	fmt.Println(bestAlphabet)
 	fmt.Println(enc)
+	return enc
 
 }

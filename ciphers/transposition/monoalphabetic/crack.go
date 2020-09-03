@@ -1,7 +1,6 @@
 package monoalphabetic
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/khan745/cipher_cracker/language_tools"
@@ -68,9 +67,6 @@ func Crack(textSecret, alphabetNormal string, realQuadgrams map[string]float64, 
 	}
 
 	enc := Decrypt(textSecret, alphabetNormal, bestAlphabet)
-	fmt.Println(strings.ToLower(alphabetNormal))
-	fmt.Println(bestAlphabet)
-	fmt.Println(enc)
 	return enc
 
 }

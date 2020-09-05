@@ -6,7 +6,7 @@ import (
 	"github.com/khan745/cipher_cracker/language_tools"
 )
 
-func calculateLocalMaximum(textSecret, alphabetReal, alphabetSecret string, reaQuadgrams map[string]float64, repeatIterations int) (int, string) {
+func calculateLocalMaximum(textSecret, alphabetReal, alphabetSecret string, reaQuadgrams map[string]float64, repeatIterations, qLength int) (int, string) {
 	maxFitnes := 0
 	bestAlphabet := alphabetSecret
 	alphabetSecretNew := alphabetSecret
@@ -16,7 +16,7 @@ func calculateLocalMaximum(textSecret, alphabetReal, alphabetSecret string, reaQ
 			for j := i + 1; j < len(alphabetSecret); j++ {
 
 				enc := Decrypt(textSecret, alphabetReal, alphabetSecretNew)
-				encryptedQuadrams := language_tools.CalculateQuadgrams(enc)
+				encryptedQuadrams := language_tools.CalculateQuadgrams(enc, qLength)
 				tmpFitnes := 0
 				for keyE, _ := range encryptedQuadrams {
 					if valueR, ok := reaQuadgrams[keyE]; ok {
@@ -48,12 +48,13 @@ func Crack(textSecret, alphabetNormal string, realQuadgrams map[string]float64, 
 	bestScoreHits := 0
 	consolidate := 2
 	repeatIterations := 1
+	qLength := 4
 
 	bestAlphabet := alphabetSecret
 
 	for i := 0; i < 1000; i++ {
 
-		score, alphabetSecretNew := calculateLocalMaximum(textSecret, alphabetNormal, bestAlphabet, realQuadgrams, repeatIterations)
+		score, alphabetSecretNew := calculateLocalMaximum(textSecret, alphabetNormal, bestAlphabet, realQuadgrams, repeatIterations, qLength)
 		if score > bestScore {
 			bestScore = score
 			bestAlphabet = alphabetSecretNew

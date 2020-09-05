@@ -27,7 +27,7 @@ func parseQuadrans(fileContent string) (map[string]int, int) {
 	return quadgrams, maxValue
 }
 
-func CalculateQuadgrams(textSecret string) map[string]float64 {
+func CalculateQuadgrams(textSecret string, qLength int) map[string]float64 {
 	cleantextSecret := strings.Replace(textSecret, " ", "", -1)
 	quadgrams := make(map[string]float64)
 	for i := 0; i < len(cleantextSecret)-4; i += 1 {

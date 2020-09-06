@@ -117,8 +117,11 @@ func main() {
 	message = strings.ToLower(message)
 
 	// monoalphabeticTest(message)
-	vigener(message)
-
+	if len(os.Args) > 1 && os.Args[1] == "-m" {
+		fmt.Println(message)
+	} else {
+		vigener(message)
+	}
 	// msg := "PPQCA XQVEKG YBNKMAZU YBNGBAL JON I TSZM JYIM VRAG VOHT VRAU C TKSG DDWUO XITLAZU VAVV RAZ C VKB QP IWPOU"
 
 	// language_tools.RepetativeStrings(message, 5)

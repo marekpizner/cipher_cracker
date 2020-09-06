@@ -43,21 +43,38 @@ func orderdic(data map[string]float64) []kv {
 	return ss
 }
 
+func spacing(array []int) []int {
+	var spacings []int
+
+	for i := 1; i < len(array); i++ {
+		diff := array[i] - array[i-1]
+		spacings = append(spacings, diff)
+		if len(spacings) > 1 {
+			spacings = append(spacings, spacings[len(spacings)-2]+diff)
+		}
+	}
+	sort.Ints(spacings[:])
+	return spacings
+}
+
 func Crack(textSecret string, realQuadgrams map[string]float64, alphabetNormalProbability []language_tools.Alphabet, alphabets []string) {
 	//TODO: crack viniger cipher
 	// 1. find key length
 	// 2. frequency analysis
-	keyLenths := []int{2, 3, 4, 5, 6, 7, 8, 9, 10}
+	// textSecret = "PPQCAXQVEKGYBNKMAZUYBNGBALJONITSZMJYIMVRAGVOHTVRAUCTKSGDDWUOXITLAZUVAVVRAZCVKBQPIWPOU"
+
+	keyLenths := []int{3, 4, 5, 6}
 
 	for _, k := range keyLenths {
 		history := language_tools.RepetativeStrings(textSecret, k)
 		historyOrder := orderArr(history)
 		fmt.Println(k)
-		for _, x := range historyOrder[:10] {
-			fmt.Println(x)
+		for _, x := range historyOrder[:] {
+			if len(x.Value) > 2 {
+				x.Value = spacing(x.Value)
+				fmt.Println(x)
+			}
 		}
 	}
-
-	// fmt.Println(quadgramsSecrets)
 
 }

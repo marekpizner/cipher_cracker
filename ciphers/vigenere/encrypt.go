@@ -1,8 +1,6 @@
 package vigenere
 
 import (
-	"fmt"
-
 	"github.com/khan745/cipher_cracker/ciphers/transposition/monoalphabetic"
 )
 
@@ -14,7 +12,6 @@ func transformEncrypt(char rune, alphabet []string, keyWorldCharacter rune) stri
 			alphabetConcrete = i
 		}
 	}
-	fmt.Println(string(char), string(keyWorldCharacter), alphabetConcrete)
 	encryptedCharacter := monoalphabetic.TransformEncrypt(char, alphabet[0], alphabetConcrete)
 	return encryptedCharacter
 }

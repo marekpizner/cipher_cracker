@@ -30,8 +30,8 @@ func parseQuadrans(fileContent string) (map[string]int, int) {
 func CalculateQuadgrams(textSecret string, qLength int) map[string]float64 {
 	cleantextSecret := strings.Replace(textSecret, " ", "", -1)
 	quadgrams := make(map[string]float64)
-	for i := 0; i < len(cleantextSecret)-4; i += 1 {
-		quadgram := cleantextSecret[i : i+4]
+	for i := 0; i < len(cleantextSecret)-qLength; i += 1 {
+		quadgram := cleantextSecret[i : i+qLength]
 		if val, ok := quadgrams[quadgram]; ok {
 			quadgrams[quadgram]++
 			val++

@@ -94,3 +94,17 @@ func GetAlphabetsOrderProbability(textSecret, alphabetNormal string, alphabetNor
 	alphabetReal, alphabetSecret = sortAlphabet(alphabetReal, alphabetSecret, alphabetNormal)
 	return alphabetReal, alphabetSecret
 }
+
+func RepetativeStrings(text string, length int) map[string][]int {
+	text = strings.ReplaceAll(text, " ", "")
+	history := make(map[string][]int)
+
+	for i := 0; i < len(text)-length; i++ {
+		str := text[i : i+length]
+		// fmt.Println(str)
+		// fmt.Println(string(x))
+		history[str] = append(history[str], i)
+	}
+
+	return history
+}

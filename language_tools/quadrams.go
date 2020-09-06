@@ -16,7 +16,7 @@ func parseQuadrans(fileContent string) (map[string]int, int) {
 	maxValue := 0
 
 	for _, x := range arrayFileContent {
-		quadgram := strings.Split(x, " ")[0]
+		quadgram := strings.ToLower(strings.Split(x, " ")[0])
 		value := strings.Split(x, " ")[1]
 		intValue, _ := strconv.Atoi(value)
 		quadgrams[quadgram] = intValue

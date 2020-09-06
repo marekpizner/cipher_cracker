@@ -105,8 +105,8 @@ func main() {
 	monoalphabeticTest(message)
 	// vigener()
 
-	realEnglishQuadrams := language_tools.ReadQuadrams("./english_quadgrams.txt")
-	fmt.Println(realEnglishQuadrams["TION"])
+	// realEnglishQuadrams := language_tools.ReadQuadrams("./english_quadgrams.txt")
+	// fmt.Println(realEnglishQuadrams["TION"])
 	// for i, x := range realEnglishQuadrams {
 	// 	fmt.Println(i, x)
 	// }

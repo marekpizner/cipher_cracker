@@ -95,7 +95,9 @@ func Crack(text string) {
 
 	// enc := Decrypt(text, alphabetReal, alphabetSecret)
 	// fmt.Println(enc)
-	quad := calculateQuadgrams(text)
-	fmt.Println(quad)
+	quadSecret := calculateQuadgrams(text)
+	realEnglishQuadrams := language_tools.ReadQuadrams("./english_quadgrams.txt")
+	fmt.Println(quadSecret)
+	fmt.Println(realEnglishQuadrams)
 
 }

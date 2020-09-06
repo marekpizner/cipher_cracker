@@ -12,7 +12,6 @@ func transformEncrypt(char rune, alphabet []string, keyWorldCharacter rune) stri
 			alphabetConcrete = i
 		}
 	}
-
 	encryptedCharacter := monoalphabetic.TransformEncrypt(char, alphabet[0], alphabetConcrete)
 	return encryptedCharacter
 }

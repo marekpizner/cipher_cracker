@@ -39,18 +39,27 @@ func shuffle(src string) string {
 func monoalphabeticTest(message string) {
 	alphabetNormal := "abcdefghijklmnopqrstuvwxyz" + " "
 	alphabetSecret := string(shuffle("abcdefghijklmnopqrstuvwxyz")) + " "
+	realQuadgrams := language_tools.ReadQuadramsFromFile("./english_quadgrams.txt")
+	alphabetNormalProb := language_tools.ReadFiles("./alphabets", "csv")
 
 	enc := monoalphabetic.Encrypt(message, alphabetNormal, alphabetSecret)
 	dec := monoalphabetic.Decrypt(enc, alphabetNormal, alphabetSecret)
 	fmt.Println("---------------------------------MONOALPHABETIC---------------------------------")
+
+	fmt.Println(alphabetNormal)
+	fmt.Println(alphabetSecret)
 	fmt.Println("Encrypted: ", enc)
 	fmt.Println("  ")
 	fmt.Println("Decrypted: ", dec)
-	monoalphabetic.Crack(enc)
+	fmt.Println("Cracking !!!!: ")
+	cracked := monoalphabetic.Crack(enc, alphabetNormal, realQuadgrams, alphabetNormalProb)
+	fmt.Println("Decrypted: ", cracked)
 }
 
 func generateVigenerAlphabet() []string {
-	alphabet := " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}"
+	// alphabet := " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}"
+	alphabet := "abcdefghijklmnopqrstuvwxyz"
+
 	alphabetLength := len(alphabet)
 	var alphabets []string
 
@@ -63,11 +72,16 @@ func generateVigenerAlphabet() []string {
 
 func vigener(message string) {
 	alphabets := generateVigenerAlphabet()
+	realQuadgrams := language_tools.ReadQuadramsFromFile("./english_quadgrams.txt")
+	alphabetNormalProb := language_tools.ReadFiles("./alphabets", "csv")
+
+	keyWord := "morca"
 	fmt.Println("---------------------------------VINEGER---------------------------------")
-	enc := vigenere.Encrypt(message, alphabets, "MORCA")
-	dec := vigenere.Decrypt(enc, alphabets, "MORCA")
+	enc := vigenere.Encrypt(message, alphabets, keyWord)
+	dec := vigenere.Decrypt(enc, alphabets, keyWord)
 	fmt.Println("Encrypted: ", enc)
 	fmt.Println("Decrypted: ", dec)
+	vigenere.Crack(enc, realQuadgrams, alphabetNormalProb, alphabets)
 }
 
 func foo() {
@@ -101,14 +115,15 @@ func readMessage() (string, error) {
 func main() {
 	message, _ := readMessage()
 	message = strings.ToLower(message)
-	// cesarTest(message)
-	monoalphabeticTest(message)
-	// vigener()
+	message = message[len(message)/2:]
+	// monoalphabeticTest(message)
+	if len(os.Args) > 1 && os.Args[1] == "-m" {
+		fmt.Println(message)
+	} else {
+		vigener(message)
+	}
+	// msg := "PPQCA XQVEKG YBNKMAZU YBNGBAL JON I TSZM JYIM VRAG VOHT VRAU C TKSG DDWUO XITLAZU VAVV RAZ C VKB QP IWPOU"
 
-	// realEnglishQuadrams := language_tools.ReadQuadrams("./english_quadgrams.txt")
-	// fmt.Println(realEnglishQuadrams["TION"])
-	// for i, x := range realEnglishQuadrams {
-	// 	fmt.Println(i, x)
-	// }
+	// language_tools.RepetativeStrings(message, 5)
 
 }

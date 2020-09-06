@@ -1,103 +1,73 @@
 package monoalphabetic
 
 import (
-	"fmt"
-	"math"
-	"sort"
 	"strings"
 
 	"github.com/khan745/cipher_cracker/language_tools"
 )
 
-func check(s string) map[rune]uint {
-	m := make(map[rune]uint, len(s))
-	for _, r := range s {
-		if r != ' ' {
-			m[r]++
+func calculateLocalMaximum(textSecret, alphabetReal, alphabetSecret string, reaQuadgrams map[string]float64, repeatIterations, qLength int) (int, string) {
+	maxFitnes := 0
+	bestAlphabet := alphabetSecret
+	alphabetSecretNew := alphabetSecret
+
+	for c := 0; c < repeatIterations; c++ {
+		for i := 0; i < len(alphabetSecret)-1; i++ {
+			for j := i + 1; j < len(alphabetSecret); j++ {
+
+				enc := Decrypt(textSecret, alphabetReal, alphabetSecretNew)
+				encryptedQuadrams := language_tools.CalculateQuadgrams(enc, qLength)
+				tmpFitnes := 0
+				for keyE, _ := range encryptedQuadrams {
+					if valueR, ok := reaQuadgrams[keyE]; ok {
+						tmpFitnes += int(valueR)
+					}
+				}
+				if tmpFitnes > maxFitnes {
+					maxFitnes = tmpFitnes
+					bestAlphabet = alphabetSecretNew
+				}
+
+				char1 := rune(bestAlphabet[i])
+				char2 := rune(bestAlphabet[j])
+
+				alphabetSecretNew = language_tools.SwapCharactersInAlphabet(bestAlphabet, char1, char2)
+			}
 		}
 	}
-	return m
+	return maxFitnes, bestAlphabet
 }
 
-func round(num float64) int {
-	return int(num + math.Copysign(0.5, num))
-}
+func Crack(textSecret, alphabetNormal string, realQuadgrams map[string]float64, alphabetNormalProbability []language_tools.Alphabet) string {
+	textSecret = strings.ToLower(textSecret)
+	alphabetNormal = strings.ToLower(alphabetNormal)
+	alphabetNormal = strings.ReplaceAll(alphabetNormal, " ", "")
+	alphabetNormal, alphabetSecret := language_tools.GetAlphabetsOrderProbability(textSecret, alphabetNormal, alphabetNormalProbability)
 
-func toFixed(num float64, precision int) float64 {
-	output := math.Pow(10, float64(precision))
-	return float64(round(num*output)) / output
-}
+	bestScore := 0
+	bestScoreHits := 0
+	consolidate := 2
+	repeatIterations := 1
+	qLength := 4
 
-func getAlphabets(text string) (string, string) {
-	frequenties := check(text)
-	encryptedAlphabet := []language_tools.Alphabet{}
-	for i, x := range frequenties {
-		encryptedAlphabet = append(encryptedAlphabet, language_tools.Alphabet{Character: string(i), Probability: float32(x)})
-	}
+	bestAlphabet := alphabetSecret
 
-	alphabetRealProb := language_tools.ReadFiles("./alphabets", "csv")
+	for i := 0; i < 1000; i++ {
 
-	sort.Slice(alphabetRealProb, func(i, j int) bool {
-		return alphabetRealProb[i].Probability > alphabetRealProb[j].Probability
-	})
-
-	sort.Slice(encryptedAlphabet, func(i, j int) bool {
-		return encryptedAlphabet[i].Probability > encryptedAlphabet[j].Probability
-	})
-
-	alphabetReal := ""
-	for _, y := range alphabetRealProb {
-		fmt.Println(y.Character, y.Probability)
-		alphabetReal += string(y.Character)
-	}
-
-	alphabetSecret := ""
-	for _, y := range encryptedAlphabet {
-		percentage := float64(y.Probability) / float64(len(text)) * 100
-		percentage = toFixed(percentage, 3)
-		fmt.Println(y.Character, percentage)
-		alphabetSecret += string(y.Character)
-	}
-	alphabetReal += " "
-	alphabetSecret += " "
-	return alphabetReal, alphabetSecret
-}
-
-func calculateQuadgrams(text string) map[string]int {
-	cleanText := strings.Replace(text, " ", "", -1)
-	quadgrams := make(map[string]int)
-	maxVal := 0
-	maxStr := ""
-	for i := 0; i < len(cleanText)-4; i++ {
-		quadgram := cleanText[i : i+4]
-		if val, ok := quadgrams[quadgram]; ok {
-			quadgrams[quadgram]++
-			val++
-		} else {
-			quadgrams[quadgram] = 1
+		score, alphabetSecretNew := calculateLocalMaximum(textSecret, alphabetNormal, bestAlphabet, realQuadgrams, repeatIterations, qLength)
+		if score > bestScore {
+			bestScore = score
+			bestAlphabet = alphabetSecretNew
+		} else if score == bestScore && score != 0 {
+			bestScoreHits++
+			if bestScoreHits == consolidate {
+				break
+			}
+			continue
 		}
-
-		if quadgrams[quadgram] > maxVal {
-			maxVal = quadgrams[quadgram]
-			maxStr = quadgram
-		}
-
 	}
-	fmt.Println("MAX val: ", maxStr, maxVal)
-	return quadgrams
-}
 
-func Crack(text string) {
-	// alphabetReal, alphabetSecret := getAlphabets(text)
-
-	// fmt.Println(alphabetReal)
-	// fmt.Println(alphabetSecret)
-
-	// enc := Decrypt(text, alphabetReal, alphabetSecret)
-	// fmt.Println(enc)
-	quadSecret := calculateQuadgrams(text)
-	realEnglishQuadrams := language_tools.ReadQuadrams("./english_quadgrams.txt")
-	fmt.Println(quadSecret)
-	fmt.Println(realEnglishQuadrams)
+	enc := Decrypt(textSecret, alphabetNormal, bestAlphabet)
+	return enc
 
 }

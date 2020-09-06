@@ -27,7 +27,22 @@ func parseQuadrans(fileContent string) (map[string]int, int) {
 	return quadgrams, maxValue
 }
 
-func ReadQuadrams(path string) map[string]float64 {
+func CalculateQuadgrams(textSecret string, qLength int) map[string]float64 {
+	cleantextSecret := strings.Replace(textSecret, " ", "", -1)
+	quadgrams := make(map[string]float64)
+	for i := 0; i < len(cleantextSecret)-qLength; i += 1 {
+		quadgram := cleantextSecret[i : i+qLength]
+		if val, ok := quadgrams[quadgram]; ok {
+			quadgrams[quadgram]++
+			val++
+		} else {
+			quadgrams[quadgram] = 1
+		}
+	}
+	return quadgrams
+}
+
+func ReadQuadramsFromFile(path string) map[string]float64 {
 	file, err := os.Open(path)
 	if err != nil {
 		log.Fatal(err)
@@ -40,8 +55,7 @@ func ReadQuadrams(path string) map[string]float64 {
 
 	for key, value := range parsedQuadrants {
 		newValue := float64(value) / float64(maxValue) * 100
-		newParsedQuadgram[key] = newValue
-		// fmt.Println(key, newValue)
+		newParsedQuadgram[strings.ToLower(key)] = newValue
 	}
 	return newParsedQuadgram
 }

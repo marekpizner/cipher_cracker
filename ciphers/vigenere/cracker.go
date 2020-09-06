@@ -56,6 +56,25 @@ func spacing(array []int) []int {
 	sort.Ints(spacings[:])
 	return spacings
 }
+func removeDuplicates(elements []int) []int {
+	// Use map to record duplicates as we find them.
+	encountered := map[int]bool{}
+	result := []int{}
+
+	for v := range elements {
+		if encountered[elements[v]] == true {
+			// Do not add duplicate.
+		} else {
+			// Record this element as an encountered element.
+			encountered[elements[v]] = true
+			// Append to result slice.
+			result = append(result, elements[v])
+		}
+	}
+	// Return the new slice.
+	sort.Ints(result[:])
+	return result
+}
 
 func Crack(textSecret string, realQuadgrams map[string]float64, alphabetNormalProbability []language_tools.Alphabet, alphabets []string) {
 	//TODO: crack viniger cipher
@@ -68,13 +87,18 @@ func Crack(textSecret string, realQuadgrams map[string]float64, alphabetNormalPr
 	for _, k := range keyLenths {
 		history := language_tools.RepetativeStrings(textSecret, k)
 		historyOrder := orderArr(history)
+		allValues := []int{}
+
 		fmt.Println(k)
 		for _, x := range historyOrder[:] {
 			if len(x.Value) > 2 {
 				x.Value = spacing(x.Value)
-				fmt.Println(x)
+				allValues = append(allValues, x.Value...)
+				// fmt.Println(x)
 			}
 		}
+		allValues = removeDuplicates(allValues)
+		fmt.Println(allValues)
 	}
 
 }

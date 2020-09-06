@@ -115,7 +115,7 @@ func readMessage() (string, error) {
 func main() {
 	message, _ := readMessage()
 	message = strings.ToLower(message)
-
+	message = message[len(message)/2:]
 	// monoalphabeticTest(message)
 	if len(os.Args) > 1 && os.Args[1] == "-m" {
 		fmt.Println(message)

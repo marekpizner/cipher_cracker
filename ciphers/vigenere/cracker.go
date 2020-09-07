@@ -76,11 +76,34 @@ func removeDuplicates(elements []int) []int {
 	return result
 }
 
+func calculateFactors(number, maxKeyLength int) []int {
+	var factors []int
+
+	if number < 2 {
+		return factors
+	}
+
+	for i := 2; i < maxKeyLength+1; i++ {
+		if number%i == 0 {
+			factors = append(factors, i)
+			otherFactor := number / i
+			if otherFactor < maxKeyLength+1 && otherFactor != 1 {
+				factors = append(factors, otherFactor)
+			}
+		}
+	}
+
+	factors = removeDuplicates(factors)
+	return factors
+}
+
 func Crack(textSecret string, realQuadgrams map[string]float64, alphabetNormalProbability []language_tools.Alphabet, alphabets []string) {
 	//TODO: crack viniger cipher
 	// 1. find key length
 	// 2. frequency analysis
 	// textSecret = "PPQCAXQVEKGYBNKMAZUYBNGBALJONITSZMJYIMVRAGVOHTVRAUCTKSGDDWUOXITLAZUVAVVRAZCVKBQPIWPOU"
+
+	fmt.Println("FFFFFF", calculateFactors(144, 16))
 
 	keyLenths := []int{3, 4, 5, 6}
 

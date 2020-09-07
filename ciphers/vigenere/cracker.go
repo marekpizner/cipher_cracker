@@ -108,16 +108,23 @@ func max(a []int) int {
 	return max
 }
 
+func countOccurence(array []int) map[int]int {
+	dic := make(map[int]int)
+	for _, x := range array {
+		dic[x]++
+	}
+	return dic
+}
+
 func Crack(textSecret string, realQuadgrams map[string]float64, alphabetNormalProbability []language_tools.Alphabet, alphabets []string) {
 	//TODO: crack viniger cipher
 	// 1. find key length
 	// 2. frequency analysis
 	// textSecret = "PPQCAXQVEKGYBNKMAZUYBNGBALJONITSZMJYIMVRAGVOHTVRAUCTKSGDDWUOXITLAZUVAVVRAZCVKBQPIWPOU"
 
-	fmt.Println("FFFFFF", calculateFactors(144, 16))
-
-	keyLenths := []int{3, 4, 5, 6}
+	keyLenths := []int{3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16}
 	maxKeyLength := max(keyLenths)
+	allOccur := make(map[int]int)
 
 	for _, k := range keyLenths {
 		history := language_tools.RepetativeStrings(textSecret, k)
@@ -141,6 +148,14 @@ func Crack(textSecret string, realQuadgrams map[string]float64, alphabetNormalPr
 		}
 		// allfactors = removeDuplicates(allfactors)
 		fmt.Println("Factors: ", allfactors)
+		occurences := countOccurence(allfactors)
+		fmt.Println("Occur: ", occurences)
+
+		for k, v := range occurences {
+			allOccur[k] += v
+		}
 	}
+
+	fmt.Println(allOccur)
 
 }

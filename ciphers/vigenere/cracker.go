@@ -97,6 +97,17 @@ func calculateFactors(number, maxKeyLength int) []int {
 	return factors
 }
 
+func max(a []int) int {
+	max := a[0]
+
+	for _, x := range a {
+		if x > max {
+			max = x
+		}
+	}
+	return max
+}
+
 func Crack(textSecret string, realQuadgrams map[string]float64, alphabetNormalProbability []language_tools.Alphabet, alphabets []string) {
 	//TODO: crack viniger cipher
 	// 1. find key length
@@ -106,22 +117,30 @@ func Crack(textSecret string, realQuadgrams map[string]float64, alphabetNormalPr
 	fmt.Println("FFFFFF", calculateFactors(144, 16))
 
 	keyLenths := []int{3, 4, 5, 6}
+	maxKeyLength := max(keyLenths)
 
 	for _, k := range keyLenths {
 		history := language_tools.RepetativeStrings(textSecret, k)
 		historyOrder := orderArr(history)
 		allValues := []int{}
 
-		fmt.Println(k)
+		fmt.Println("key length: ", k)
 		for _, x := range historyOrder[:] {
 			if len(x.Value) > 2 {
 				x.Value = spacing(x.Value)
 				allValues = append(allValues, x.Value...)
-				// fmt.Println(x)
 			}
 		}
 		allValues = removeDuplicates(allValues)
-		fmt.Println(allValues)
+		fmt.Println("Spacing: ", allValues)
+
+		allfactors := []int{}
+		for _, x := range allValues {
+			factors := calculateFactors(x, maxKeyLength)
+			allfactors = append(allfactors, factors...)
+		}
+		// allfactors = removeDuplicates(allfactors)
+		fmt.Println("Factors: ", allfactors)
 	}
 
 }

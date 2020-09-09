@@ -1,6 +1,8 @@
 package vigenere
 
 import (
+	"unicode"
+
 	"github.com/khan745/cipher_cracker/ciphers/transposition/monoalphabetic"
 )
 
@@ -19,10 +21,16 @@ func transformDecrypt(char rune, alphabet []string, keyWorldCharacter rune) stri
 
 func Decrypt(text string, alphabet []string, keyWord string) string {
 	newText := ""
-	for i, char := range text {
-		keywordCharacterIndex := i % len(keyWord)
+	ik := 0
+	for _, char := range text {
+		if unicode.IsSpace(char) {
+			newText += string(char)
+			continue
+		}
+		keywordCharacterIndex := ik % len(keyWord)
 		keywordCharacter := rune(keyWord[keywordCharacterIndex])
 		newText += transformDecrypt(char, alphabet, keywordCharacter)
+		ik++
 	}
 	return newText
 }

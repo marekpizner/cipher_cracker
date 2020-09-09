@@ -135,9 +135,7 @@ func Crack(textSecret string, realQuadgrams map[string]float64, alphabetNormalPr
 	// 2. frequency analysis
 	// textSecret = "PPQCAXQVEKGYBNKMAZUYBNGBALJONITSZMJYIMVRAGVOHTVRAUCTKSGDDWUOXITLAZUVAVVRAZCVKBQPIWPOU"
 
-	fmt.Println(getNstring("ABCABCABC", 3))
-
-	keyLenths := []int{3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16}
+	keyLenths := []int{3, 4, 5, 6}
 	maxKeyLength := max(keyLenths)
 	posibleKeyLengths := make(map[int]int)
 
@@ -161,9 +159,9 @@ func Crack(textSecret string, realQuadgrams map[string]float64, alphabetNormalPr
 			allfactors = append(allfactors, factors...)
 		}
 		// allfactors = removeDuplicates(allfactors)
-		fmt.Println("Factors: ", allfactors)
+		// fmt.Println("Factors: ", allfactors)
 		occurences := countOccurence(allfactors)
-		fmt.Println("Occur: ", occurences)
+		// fmt.Println("Occur: ", occurences)
 
 		for k, v := range occurences {
 			posibleKeyLengths[k] += v
@@ -173,29 +171,17 @@ func Crack(textSecret string, realQuadgrams map[string]float64, alphabetNormalPr
 	fmt.Println(posibleKeyLengths)
 	// TODO
 	// for each key length calculate key
-	encryptedAlphabet := []Alphabet{}
-	for i, x := range frequenties {
-		encryptedAlphabet = append(encryptedAlphabet, Alphabet{Character: string(i), Probability: float32(x)})
+
+	t := getNstring(textSecret, 5)
+	fmt.Println(t)
+	pt := language_tools.CalculateProbability(t)
+
+	for k, v := range pt {
+		fmt.Println(string(k), float64(v)/float64(len(t))*100)
 	}
+	alphabetNormalProb := language_tools.ReadFiles("./alphabets", "csv")
 
-	sort.Slice(alphabetNormalProbability, func(i, j int) bool {
-		return alphabetNormalProbability[i].Probability > alphabetNormalProbability[j].Probability
-	})
-
-	// t := getNstring(textSecret, 2)
-	// alphabetNormal := "abcdefghijklmnopqrstuvwxyz"
-
-	// alphabetNormalProb := language_tools.ReadFiles("./alphabets", "csv")
-
-	// alphabetReal, alphabetSecret := language_tools.GetAlphabetsOrderProbability(t, alphabetNormal, alphabetNormalProb)
-
-	// fmt.Println(alphabetReal)
-	// fmt.Println(alphabetSecret)
-
-	// quadgrams := language_tools.CalculateQuadgrams(t, 4)
-	// quadgramsOrdered := orderdic(quadgrams)
-
-	// for _, x := range quadgramsOrdered[:20] {
-	// 	fmt.Println(x)
-	// }
+	for _, x := range alphabetNormalProb {
+		fmt.Println(x)
+	}
 }

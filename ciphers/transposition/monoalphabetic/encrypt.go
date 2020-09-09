@@ -20,7 +20,7 @@ func Encrypt(text string, alphabtNormal string, alphabetSecret string) string {
 	newText := ""
 	for _, char := range text {
 		if unicode.IsSpace(char) {
-			newText += " "
+			newText += string(char)
 			continue
 		}
 		newText += TransformEncrypt(char, alphabtNormal, alphabetSecret)

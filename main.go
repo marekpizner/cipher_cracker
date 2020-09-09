@@ -75,7 +75,7 @@ func vigener(message string) {
 	realQuadgrams := language_tools.ReadQuadramsFromFile("./english_quadgrams.txt")
 	alphabetNormalProb := language_tools.ReadFiles("./alphabets", "csv")
 
-	keyWord := "morca"
+	keyWord := "python"
 	fmt.Println("---------------------------------VINEGER---------------------------------")
 	enc := vigenere.Encrypt(message, alphabets, keyWord)
 	dec := vigenere.Decrypt(enc, alphabets, keyWord)
@@ -115,7 +115,8 @@ func readMessage() (string, error) {
 func main() {
 	message, _ := readMessage()
 	message = strings.ToLower(message)
-	message = message[len(message)/2:]
+	// message = message[len(message)/2:]
+	message = message[:700]
 	// monoalphabeticTest(message)
 	if len(os.Args) > 1 && os.Args[1] == "-m" {
 		fmt.Println(message)

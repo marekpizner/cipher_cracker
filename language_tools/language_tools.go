@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-func check(s string) map[rune]uint {
+func calculateProbability(s string) map[rune]uint {
 	m := make(map[rune]uint, len(s))
 	for _, r := range s {
 		if r != ' ' {
@@ -66,7 +66,7 @@ func sortAlphabet(aNormal, aSecret, alphabetNormal string) (string, string) {
 }
 
 func GetAlphabetsOrderProbability(textSecret, alphabetNormal string, alphabetNormalProbability []Alphabet) (string, string) {
-	frequenties := check(textSecret)
+	frequenties := calculateProbability(textSecret)
 	encryptedAlphabet := []Alphabet{}
 	for i, x := range frequenties {
 		encryptedAlphabet = append(encryptedAlphabet, Alphabet{Character: string(i), Probability: float32(x)})

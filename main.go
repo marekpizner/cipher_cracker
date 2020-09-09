@@ -124,6 +124,4 @@ func main() {
 	}
 	// msg := "PPQCA XQVEKG YBNKMAZU YBNGBAL JON I TSZM JYIM VRAG VOHT VRAU C TKSG DDWUO XITLAZU VAVV RAZ C VKB QP IWPOU"
 
-	// language_tools.RepetativeStrings(message, 5)
-
 }

@@ -3,6 +3,7 @@ package vigenere
 import (
 	"fmt"
 	"sort"
+	"strings"
 
 	"github.com/khan745/cipher_cracker/language_tools"
 )
@@ -116,21 +117,34 @@ func countOccurence(array []int) map[int]int {
 	return dic
 }
 
+func getNstring(str string, n int) string {
+	newString := ""
+	str = strings.ReplaceAll(str, " ", "")
+
+	for i, x := range str {
+		if i != 0 && i%n == 0 {
+			newString += string(x)
+		}
+	}
+	return newString
+}
+
 func Crack(textSecret string, realQuadgrams map[string]float64, alphabetNormalProbability []language_tools.Alphabet, alphabets []string) {
 	//TODO: crack viniger cipher
 	// 1. find key length
 	// 2. frequency analysis
 	// textSecret = "PPQCAXQVEKGYBNKMAZUYBNGBALJONITSZMJYIMVRAGVOHTVRAUCTKSGDDWUOXITLAZUVAVVRAZCVKBQPIWPOU"
 
+	fmt.Println(getNstring("ABCABCABC", 3))
+
 	keyLenths := []int{3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16}
 	maxKeyLength := max(keyLenths)
-	allOccur := make(map[int]int)
+	posibleKeyLengths := make(map[int]int)
 
 	for _, k := range keyLenths {
 		history := language_tools.RepetativeStrings(textSecret, k)
 		historyOrder := orderArr(history)
 		allValues := []int{}
-
 		fmt.Println("key length: ", k)
 		for _, x := range historyOrder[:] {
 			if len(x.Value) > 2 {
@@ -152,10 +166,36 @@ func Crack(textSecret string, realQuadgrams map[string]float64, alphabetNormalPr
 		fmt.Println("Occur: ", occurences)
 
 		for k, v := range occurences {
-			allOccur[k] += v
+			posibleKeyLengths[k] += v
 		}
 	}
 
-	fmt.Println(allOccur)
+	fmt.Println(posibleKeyLengths)
+	// TODO
+	// for each key length calculate key
+	encryptedAlphabet := []Alphabet{}
+	for i, x := range frequenties {
+		encryptedAlphabet = append(encryptedAlphabet, Alphabet{Character: string(i), Probability: float32(x)})
+	}
 
+	sort.Slice(alphabetNormalProbability, func(i, j int) bool {
+		return alphabetNormalProbability[i].Probability > alphabetNormalProbability[j].Probability
+	})
+
+	// t := getNstring(textSecret, 2)
+	// alphabetNormal := "abcdefghijklmnopqrstuvwxyz"
+
+	// alphabetNormalProb := language_tools.ReadFiles("./alphabets", "csv")
+
+	// alphabetReal, alphabetSecret := language_tools.GetAlphabetsOrderProbability(t, alphabetNormal, alphabetNormalProb)
+
+	// fmt.Println(alphabetReal)
+	// fmt.Println(alphabetSecret)
+
+	// quadgrams := language_tools.CalculateQuadgrams(t, 4)
+	// quadgramsOrdered := orderdic(quadgrams)
+
+	// for _, x := range quadgramsOrdered[:20] {
+	// 	fmt.Println(x)
+	// }
 }

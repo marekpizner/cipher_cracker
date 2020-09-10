@@ -135,7 +135,7 @@ func Crack(textSecret string, realQuadgrams map[string]float64, alphabetNormalPr
 	// 2. frequency analysis
 	// textSecret = "PPQCAXQVEKGYBNKMAZUYBNGBALJONITSZMJYIMVRAGVOHTVRAUCTKSGDDWUOXITLAZUVAVVRAZCVKBQPIWPOU"
 
-	keyLenths := []int{3, 4, 5, 6}
+	keyLenths := []int{3, 4, 5, 6, 7}
 	maxKeyLength := max(keyLenths)
 	posibleKeyLengths := make(map[int]int)
 

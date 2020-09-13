@@ -91,6 +91,21 @@ func foo() {
 	}
 }
 
+func clearMessage(str string) string {
+	str = strings.Replace(str, ".", "", -1)
+	str = strings.Replace(str, ",", "", -1)
+	str = strings.Replace(str, "!", "", -1)
+	str = strings.Replace(str, "?", "", -1)
+	str = strings.Replace(str, ":", "", -1)
+	str = strings.Replace(str, "-", "", -1)
+	str = strings.Replace(str, "\"", "", -1)
+	str = strings.Replace(str, "'", "", -1)
+	str = strings.Replace(str, "'", "", -1)
+	str = strings.Replace(str, ";", "", -1)
+	str = strings.Replace(str, "—", "", -1)
+	return str
+}
+
 func readMessage() (string, error) {
 	file, err := os.Open("message.txt")
 	if err != nil {
@@ -98,25 +113,20 @@ func readMessage() (string, error) {
 	}
 	defer file.Close()
 	b, err := ioutil.ReadAll(file)
-	newString := string(b)
-	newString = strings.Replace(newString, ".", "", -1)
-	newString = strings.Replace(newString, ",", "", -1)
-	newString = strings.Replace(newString, "!", "", -1)
-	newString = strings.Replace(newString, "?", "", -1)
-	newString = strings.Replace(newString, ":", "", -1)
-	newString = strings.Replace(newString, "-", "", -1)
-	newString = strings.Replace(newString, "\"", "", -1)
-	newString = strings.Replace(newString, "'", "", -1)
-	newString = strings.Replace(newString, "'", "", -1)
-	newString = strings.Replace(newString, ";", "", -1)
-
-	return newString, err
+	str := string(b)
+	str = clearMessage(str)
+	return str, err
 }
 func main() {
 	message, _ := readMessage()
+	message = clearMessage("To be, or not to be, that is the question— Whether 'tis Nobler in the mind to suffer The Slings and Arrows of outrageous Fortune,Or to take Arms against a Sea of troubles,And by opposing end them?William Shakespeare - Hamlet")
+
 	message = strings.ToLower(message)
-	// message = message[len(message)/2:]
-	message = message[:1000]
+
+	fmt.Println(language_tools.IndefOfCoubcudence(message))
+
+	message = message[:len(message)/2]
+	// message = message[:1500]
 	// monoalphabeticTest(message)
 	if len(os.Args) > 1 && os.Args[1] == "-m" {
 		fmt.Println(message)

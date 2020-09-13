@@ -173,6 +173,9 @@ func Crack(textSecret string, realQuadgrams map[string]float64, alphabetNormalPr
 	// for each key length calculate key
 
 	t := getNstring(textSecret, 5)
+	ic := language_tools.IndexOfCoincidence(t)
+	fmt.Println(ic)
+
 	fmt.Println(t)
 	pt := language_tools.CalculateProbability(t)
 

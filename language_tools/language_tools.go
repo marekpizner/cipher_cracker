@@ -108,3 +108,20 @@ func RepetativeStrings(text string, length int) map[string][]int {
 
 	return history
 }
+
+func IndexOfCoincidence(str string) float64 {
+	num := 0
+	den := 0
+
+	counst := CalculateProbability(str)
+
+	for _, x := range counst {
+		val := int(x)
+		num += val * (val - 1)
+		den += val
+	}
+	if den == 0 {
+		return 0.0
+	}
+	return float64(num) / float64(float64(den)*float64(den-1))
+}

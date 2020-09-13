@@ -2,6 +2,7 @@ package vigenere
 
 import (
 	"fmt"
+	"math"
 	"sort"
 	"strings"
 
@@ -168,23 +169,22 @@ func Crack(textSecret string, realQuadgrams map[string]float64, alphabetNormalPr
 		}
 	}
 
-	fmt.Println(posibleKeyLengths)
+	fmt.Println("Possible key lengths: ", posibleKeyLengths)
 	// TODO
 	// for each key length calculate key
+	t := getNstring(textSecret, 2)
+	theBestGuseKeyLength := 2
+	theBestGursKeyValue := math.Abs(0.0667 - float64(language_tools.IndexOfCoincidence(t)))
 
-	t := getNstring(textSecret, 5)
-	ic := language_tools.IndexOfCoincidence(t)
-	fmt.Println(ic)
-
-	fmt.Println(t)
-	pt := language_tools.CalculateProbability(t)
-
-	for k, v := range pt {
-		fmt.Println(string(k), float64(v)/float64(len(t))*100)
+	for k, _ := range posibleKeyLengths {
+		t := getNstring(textSecret, k)
+		ic := language_tools.IndexOfCoincidence(t)
+		fmt.Println("Key length: ", k, "IC: ", ic)
+		if (0.0667 - float64(ic)) < theBestGursKeyValue {
+			theBestGuseKeyLength = k
+			theBestGursKeyValue = math.Abs(0.0667 - float64(ic))
+		}
 	}
-	alphabetNormalProb := language_tools.ReadFiles("./alphabets", "csv")
+	fmt.Println("Best key length: ", theBestGuseKeyLength, " with score: ", theBestGursKeyValue)
 
-	for _, x := range alphabetNormalProb {
-		fmt.Println(x)
-	}
 }

@@ -119,20 +119,13 @@ func readMessage() (string, error) {
 }
 func main() {
 	message, _ := readMessage()
-	message = clearMessage("To be, or not to be, that is the question— Whether 'tis Nobler in the mind to suffer The Slings and Arrows of outrageous Fortune,Or to take Arms against a Sea of troubles,And by opposing end them?William Shakespeare - Hamlet")
-
 	message = strings.ToLower(message)
-
-	fmt.Println(language_tools.IndefOfCoubcudence(message))
-
 	message = message[:len(message)/2]
-	// message = message[:1500]
-	// monoalphabeticTest(message)
+
 	if len(os.Args) > 1 && os.Args[1] == "-m" {
 		fmt.Println(message)
 	} else {
 		vigener(message)
 	}
-	// msg := "PPQCA XQVEKG YBNKMAZU YBNGBAL JON I TSZM JYIM VRAG VOHT VRAU C TKSG DDWUO XITLAZU VAVV RAZ C VKB QP IWPOU"
 
 }

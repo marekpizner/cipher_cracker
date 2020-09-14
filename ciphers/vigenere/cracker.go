@@ -118,13 +118,14 @@ func countOccurence(array []int) map[int]int {
 	return dic
 }
 
-func getNstring(str string, n int) string {
+func getNstring(str string, start, n int) string {
 	newString := ""
 	str = strings.ReplaceAll(str, " ", "")
 
-	for i, x := range str {
-		if i != 0 && i%n == 0 {
-			newString += string(x)
+	for i := 0; i < len(str)-start; i++ {
+
+		if (i)%n == 0 {
+			newString += string(str[start+i])
 		}
 	}
 	return newString
@@ -135,8 +136,8 @@ func Crack(textSecret string, realQuadgrams map[string]float64, alphabetNormalPr
 	// 1. find key length
 	// 2. frequency analysis
 	// textSecret = "PPQCAXQVEKGYBNKMAZUYBNGBALJONITSZMJYIMVRAGVOHTVRAUCTKSGDDWUOXITLAZUVAVVRAZCVKBQPIWPOU"
-
-	keyLenths := []int{3, 4, 5, 6, 7}
+	englishIc := 0.0667
+	keyLenths := []int{3, 4, 5, 6, 7, 8, 9, 10}
 	maxKeyLength := max(keyLenths)
 	posibleKeyLengths := make(map[int]int)
 
@@ -172,19 +173,23 @@ func Crack(textSecret string, realQuadgrams map[string]float64, alphabetNormalPr
 	fmt.Println("Possible key lengths: ", posibleKeyLengths)
 	// TODO
 	// for each key length calculate key
-	t := getNstring(textSecret, 2)
+	t := getNstring(textSecret, 0, 2)
 	theBestGuseKeyLength := 2
-	theBestGursKeyValue := math.Abs(0.0667 - float64(language_tools.IndexOfCoincidence(t)))
+	theBestGursKeyValue := math.Abs(englishIc - float64(language_tools.IndexOfCoincidence(t)))
 
 	for k, _ := range posibleKeyLengths {
-		t := getNstring(textSecret, k)
+		t := getNstring(textSecret, 0, k)
 		ic := language_tools.IndexOfCoincidence(t)
 		fmt.Println("Key length: ", k, "IC: ", ic)
-		if (0.0667 - float64(ic)) < theBestGursKeyValue {
+		if (englishIc - float64(ic)) < theBestGursKeyValue {
 			theBestGuseKeyLength = k
-			theBestGursKeyValue = math.Abs(0.0667 - float64(ic))
+			theBestGursKeyValue = math.Abs(englishIc - float64(ic))
 		}
 	}
 	fmt.Println("Best key length: ", theBestGuseKeyLength, " with score: ", theBestGursKeyValue)
 
+	for i := 0; i < theBestGuseKeyLength; i++ {
+		t := getNstring(textSecret, i, theBestGuseKeyLength)
+		fmt.Println(i, t)
+	}
 }

@@ -2,7 +2,6 @@ package languagetools
 
 import (
 	"testing"
-	"time"
 )
 
 func TestCalculateProbability(t *testing.T) {
@@ -40,13 +39,19 @@ func TestSwapCharactersInAlphabet(t *testing.T) {
 	}
 }
 
-func TestsortAlphabet(t *testing.T) {
+func TestSortAlphabet(t *testing.T) {
 	t.Parallel()
 	alphabetNormal := "abcd"
 	alphabetSecret := "jocz"
 	alphabetProb := "cdba"
 
-	sortAlphabet(alphabetProb, alphabetSecret, alphabetNormal)
-	t.Log(alphabetNormal)
-	time.Sleep(2)
+	an, as := sortAlphabet(alphabetProb, alphabetSecret, alphabetNormal)
+
+	if an != alphabetNormal {
+		t.Errorf("Wrong order of normal alphabet")
+	}
+
+	if as != "zcjo" {
+		t.Error("Wrong order of secret alphabet")
+	}
 }

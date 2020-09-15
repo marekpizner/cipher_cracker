@@ -6,7 +6,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/khan745/cipher_cracker/language_tools"
+	"github.com/khan745/cipher_cracker/languagetools"
 )
 
 type kv struct {
@@ -131,7 +131,7 @@ func getNstring(str string, start, n int) string {
 	return newString
 }
 
-func Crack(textSecret string, realQuadgrams map[string]float64, alphabetNormalProbability []language_tools.Alphabet, alphabets []string) {
+func Crack(textSecret string, realQuadgrams map[string]float64, alphabetNormalProb []languagetools.Alphabet, alphabets []string) {
 	//TODO: crack viniger cipher
 	// 1. find key length
 	// 2. frequency analysis
@@ -142,7 +142,7 @@ func Crack(textSecret string, realQuadgrams map[string]float64, alphabetNormalPr
 	posibleKeyLengths := make(map[int]int)
 
 	for _, k := range keyLenths {
-		history := language_tools.RepetativeStrings(textSecret, k)
+		history := languagetools.RepetativeStrings(textSecret, k)
 		historyOrder := orderArr(history)
 		allValues := []int{}
 		fmt.Println("key length: ", k)
@@ -175,11 +175,11 @@ func Crack(textSecret string, realQuadgrams map[string]float64, alphabetNormalPr
 	// for each key length calculate key
 	t := getNstring(textSecret, 0, 2)
 	theBestGuseKeyLength := 2
-	theBestGursKeyValue := math.Abs(englishIc - float64(language_tools.IndexOfCoincidence(t)))
+	theBestGursKeyValue := math.Abs(englishIc - float64(languagetools.IndexOfCoincidence(t)))
 
 	for k, _ := range posibleKeyLengths {
 		t := getNstring(textSecret, 0, k)
-		ic := language_tools.IndexOfCoincidence(t)
+		ic := languagetools.IndexOfCoincidence(t)
 		fmt.Println("Key length: ", k, "IC: ", ic)
 		if (englishIc - float64(ic)) < theBestGursKeyValue {
 			theBestGuseKeyLength = k
@@ -191,5 +191,20 @@ func Crack(textSecret string, realQuadgrams map[string]float64, alphabetNormalPr
 	for i := 0; i < theBestGuseKeyLength; i++ {
 		t := getNstring(textSecret, i, theBestGuseKeyLength)
 		fmt.Println(i, t)
+		ar, as := languagetools.GetAlphabetsOrderProbability(t, alphabets[0], alphabetNormalProb)
+
+		// index := languagetools.FindIndexOfString(as, 'e')
+		// alphabet := alphabets[0]
+		// for _, a := range alphabets {
+		// 	index_tmp := languagetools.FindIndexOfString(a, 'e')
+		// 	if index == index_tmp {
+		// 		alphabet = a
+		// 		break
+		// 	}
+		// }
+
+		fmt.Println(ar, as)
+
+		fmt.Println()
 	}
 }

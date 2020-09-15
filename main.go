@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/khan745/cipher_cracker/language_tools"
+	"github.com/khan745/cipher_cracker/languagetools"
 
 	"github.com/khan745/cipher_cracker/ciphers/cesar"
 	"github.com/khan745/cipher_cracker/ciphers/transposition/monoalphabetic"
@@ -39,8 +39,8 @@ func shuffle(src string) string {
 func monoalphabeticTest(message string) {
 	alphabetNormal := "abcdefghijklmnopqrstuvwxyz" + " "
 	alphabetSecret := string(shuffle("abcdefghijklmnopqrstuvwxyz")) + " "
-	realQuadgrams := language_tools.ReadQuadramsFromFile("./english_quadgrams.txt")
-	alphabetNormalProb := language_tools.ReadFiles("./alphabets", "csv")
+	realQuadgrams := languagetools.ReadQuadramsFromFile("./english_quadgrams.txt")
+	alphabetNormalProb := languagetools.ReadFiles("./alphabets", "csv")
 
 	enc := monoalphabetic.Encrypt(message, alphabetNormal, alphabetSecret)
 	dec := monoalphabetic.Decrypt(enc, alphabetNormal, alphabetSecret)
@@ -52,7 +52,7 @@ func monoalphabeticTest(message string) {
 	fmt.Println("  ")
 	fmt.Println("Decrypted: ", dec)
 	fmt.Println("Cracking !!!!: ")
-	cracked := monoalphabetic.Crack(enc, alphabetNormal, realQuadgrams, alphabetNormalProb)
+	cracked, _ := monoalphabetic.Crack(enc, alphabetNormal, realQuadgrams, alphabetNormalProb)
 	fmt.Println("Decrypted: ", cracked)
 }
 
@@ -72,8 +72,8 @@ func generateVigenerAlphabet() []string {
 
 func vigener(message string) {
 	alphabets := generateVigenerAlphabet()
-	realQuadgrams := language_tools.ReadQuadramsFromFile("./english_quadgrams.txt")
-	alphabetNormalProb := language_tools.ReadFiles("./alphabets", "csv")
+	realQuadgrams := languagetools.ReadQuadramsFromFile("./english_quadgrams.txt")
+	alphabetNormalProb := languagetools.ReadFiles("./alphabets", "csv")
 
 	keyWord := "python"
 	fmt.Println("---------------------------------VINEGER---------------------------------")
@@ -85,7 +85,7 @@ func vigener(message string) {
 }
 
 func foo() {
-	a := language_tools.ReadFiles("./alphabets", "csv")
+	a := languagetools.ReadFiles("./alphabets", "csv")
 	for x, y := range a {
 		fmt.Println(x, y)
 	}

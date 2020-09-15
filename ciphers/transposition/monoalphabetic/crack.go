@@ -3,7 +3,7 @@ package monoalphabetic
 import (
 	"strings"
 
-	"github.com/khan745/cipher_cracker/language_tools"
+	"github.com/khan745/cipher_cracker/languagetools"
 )
 
 func calculateLocalMaximum(textSecret, alphabetReal, alphabetSecret string, reaQuadgrams map[string]float64, repeatIterations, qLength int) (int, string) {
@@ -16,7 +16,7 @@ func calculateLocalMaximum(textSecret, alphabetReal, alphabetSecret string, reaQ
 			for j := i + 1; j < len(alphabetSecret); j++ {
 
 				enc := Decrypt(textSecret, alphabetReal, alphabetSecretNew)
-				encryptedQuadrams := language_tools.CalculateQuadgrams(enc, qLength)
+				encryptedQuadrams := languagetools.CalculateQuadgrams(enc, qLength)
 				tmpFitnes := 0
 				for keyE, _ := range encryptedQuadrams {
 					if valueR, ok := reaQuadgrams[keyE]; ok {
@@ -31,18 +31,18 @@ func calculateLocalMaximum(textSecret, alphabetReal, alphabetSecret string, reaQ
 				char1 := rune(bestAlphabet[i])
 				char2 := rune(bestAlphabet[j])
 
-				alphabetSecretNew = language_tools.SwapCharactersInAlphabet(bestAlphabet, char1, char2)
+				alphabetSecretNew = languagetools.SwapCharactersInAlphabet(bestAlphabet, char1, char2)
 			}
 		}
 	}
 	return maxFitnes, bestAlphabet
 }
 
-func Crack(textSecret, alphabetNormal string, realQuadgrams map[string]float64, alphabetNormalProbability []language_tools.Alphabet) string {
+func Crack(textSecret, alphabetNormal string, realQuadgrams map[string]float64, alphabetNormalProbability []languagetools.Alphabet) (string, string) {
 	textSecret = strings.ToLower(textSecret)
 	alphabetNormal = strings.ToLower(alphabetNormal)
 	alphabetNormal = strings.ReplaceAll(alphabetNormal, " ", "")
-	alphabetNormal, alphabetSecret := language_tools.GetAlphabetsOrderProbability(textSecret, alphabetNormal, alphabetNormalProbability)
+	alphabetNormal, alphabetSecret := languagetools.GetAlphabetsOrderProbability(textSecret, alphabetNormal, alphabetNormalProbability)
 
 	bestScore := 0
 	bestScoreHits := 0
@@ -68,6 +68,6 @@ func Crack(textSecret, alphabetNormal string, realQuadgrams map[string]float64, 
 	}
 
 	enc := Decrypt(textSecret, alphabetNormal, bestAlphabet)
-	return enc
+	return enc, bestAlphabet
 
 }

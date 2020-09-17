@@ -117,6 +117,7 @@ func readMessage() (string, error) {
 	str = clearMessage(str)
 	return str, err
 }
+
 func main() {
 	message, _ := readMessage()
 	message = strings.ToLower(message)

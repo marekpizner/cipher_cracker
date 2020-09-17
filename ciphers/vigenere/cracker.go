@@ -6,12 +6,19 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/khan745/cipher_cracker/ciphers/transposition/monoalphabetic"
+
 	"github.com/khan745/cipher_cracker/languagetools"
 )
 
 type kv struct {
 	Key   string
 	Value float64
+}
+
+type kvv struct {
+	Key   rune
+	Value uint
 }
 
 type ka struct {
@@ -27,6 +34,19 @@ func orderArr(data map[string][]int) []ka {
 
 	sort.Slice(ss, func(i, j int) bool {
 		return len(ss[i].Value) > len(ss[j].Value)
+	})
+
+	return ss
+}
+
+func orderdicUint(data map[rune]uint) []kvv {
+	var ss []kvv
+	for k, v := range data {
+		ss = append(ss, kvv{k, v})
+	}
+
+	sort.Slice(ss, func(i, j int) bool {
+		return ss[i].Value > ss[j].Value
 	})
 
 	return ss
@@ -131,6 +151,35 @@ func getNstring(str string, start, n int) string {
 	return newString
 }
 
+func findLocalMaximum(bestKey, textSecret string, realQuadgrams map[string]float64, alphabets []string) string {
+	qLength := 4
+	maxFitnes := 0
+	key := bestKey
+	for c := 0; c < 2; c++ {
+		for keyl := 0; keyl < len(bestKey); keyl++ {
+			for al := 0; al < len(alphabets); al++ {
+
+				dec := Decrypt(textSecret, alphabets, key)
+				encryptedQuadrams := languagetools.CalculateQuadgrams(dec, qLength)
+
+				tmpFitnes := 0
+				for keyE, _ := range encryptedQuadrams {
+					if valueR, ok := realQuadgrams[keyE]; ok {
+						tmpFitnes += int(valueR)
+					}
+				}
+				if tmpFitnes > maxFitnes {
+					maxFitnes = tmpFitnes
+					bestKey = key
+				}
+
+				key = bestKey[:keyl] + string(alphabets[al][0]) + bestKey[keyl+1:]
+			}
+		}
+	}
+	return bestKey
+}
+
 func Crack(textSecret string, realQuadgrams map[string]float64, alphabetNormalProb []languagetools.Alphabet, alphabets []string) {
 	//TODO: crack viniger cipher
 	// 1. find key length
@@ -187,24 +236,25 @@ func Crack(textSecret string, realQuadgrams map[string]float64, alphabetNormalPr
 		}
 	}
 	fmt.Println("Best key length: ", theBestGuseKeyLength, " with score: ", theBestGursKeyValue)
-
+	key := ""
 	for i := 0; i < theBestGuseKeyLength; i++ {
 		t := getNstring(textSecret, i, theBestGuseKeyLength)
 		fmt.Println(i, t)
-		ar, as := languagetools.GetAlphabetsOrderProbability(t, alphabets[0], alphabetNormalProb)
 
-		// index := languagetools.FindIndexOfString(as, 'e')
-		// alphabet := alphabets[0]
-		// for _, a := range alphabets {
-		// 	index_tmp := languagetools.FindIndexOfString(a, 'e')
-		// 	if index == index_tmp {
-		// 		alphabet = a
-		// 		break
-		// 	}
-		// }
+		for _, alphabet := range alphabets {
+			dec := monoalphabetic.Decrypt(t, alphabets[0], alphabet)
 
-		fmt.Println(ar, as)
-
-		fmt.Println()
+			prob := languagetools.CalculateProbability(dec)
+			probOrder := orderdicUint(prob)
+			if probOrder[0].Key == 'e' {
+				fmt.Println(string(probOrder[0].Key), probOrder[0].Value, string(alphabet[0]))
+				key += string(alphabet[0])
+			}
+		}
 	}
+	fmt.Println("Best key length: ", theBestGuseKeyLength, " with score: ", theBestGursKeyValue)
+	fmt.Println("Best key:", key)
+	bestKey := findLocalMaximum(key, textSecret, realQuadgrams, alphabets)
+	fmt.Println("Best key:", bestKey)
+
 }

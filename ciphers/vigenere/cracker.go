@@ -253,8 +253,7 @@ func Crack(textSecret string, realQuadgrams map[string]float64, alphabetNormalPr
 		}
 	}
 	fmt.Println("Best key length: ", theBestGuseKeyLength, " with score: ", theBestGursKeyValue)
-	fmt.Println("Best key:", key)
+	fmt.Println("Best key by freq alan:", key)
 	bestKey := findLocalMaximum(key, textSecret, realQuadgrams, alphabets)
-	fmt.Println("Best key:", bestKey)
-
+	fmt.Println("Best key by local max:", bestKey)
 }

@@ -79,21 +79,16 @@ func spacing(array []int) []int {
 	return spacings
 }
 func removeDuplicates(elements []int) []int {
-	// Use map to record duplicates as we find them.
 	encountered := map[int]bool{}
 	result := []int{}
 
 	for v := range elements {
 		if encountered[elements[v]] == true {
-			// Do not add duplicate.
 		} else {
-			// Record this element as an encountered element.
 			encountered[elements[v]] = true
-			// Append to result slice.
 			result = append(result, elements[v])
 		}
 	}
-	// Return the new slice.
 	sort.Ints(result[:])
 	return result
 }
@@ -180,12 +175,8 @@ func findLocalMaximum(bestKey, textSecret string, realQuadgrams map[string]float
 	return bestKey
 }
 
-func Crack(textSecret string, realQuadgrams map[string]float64, alphabetNormalProb []languagetools.Alphabet, alphabets []string) {
-	//TODO: crack viniger cipher
-	// 1. find key length
-	// 2. frequency analysis
-	// textSecret = "PPQCAXQVEKGYBNKMAZUYBNGBALJONITSZMJYIMVRAGVOHTVRAUCTKSGDDWUOXITLAZUVAVVRAZCVKBQPIWPOU"
-	englishIc := 0.0667
+func findKeyLengths(textSecret string) map[int]int {
+
 	keyLenths := []int{3, 4, 5, 6, 7, 8, 9, 10}
 	maxKeyLength := max(keyLenths)
 	posibleKeyLengths := make(map[int]int)
@@ -209,33 +200,43 @@ func Crack(textSecret string, realQuadgrams map[string]float64, alphabetNormalPr
 			factors := calculateFactors(x, maxKeyLength)
 			allfactors = append(allfactors, factors...)
 		}
-		// allfactors = removeDuplicates(allfactors)
-		// fmt.Println("Factors: ", allfactors)
 		occurences := countOccurence(allfactors)
-		// fmt.Println("Occur: ", occurences)
-
 		for k, v := range occurences {
 			posibleKeyLengths[k] += v
 		}
 	}
+	return posibleKeyLengths
 
-	fmt.Println("Possible key lengths: ", posibleKeyLengths)
-	// TODO
-	// for each key length calculate key
+}
+
+func findBestKeyLength(textSecret string, posibleKeyLengths map[int]int, languageIc float64) (int, float64) {
 	t := getNstring(textSecret, 0, 2)
 	theBestGuseKeyLength := 2
-	theBestGursKeyValue := math.Abs(englishIc - float64(languagetools.IndexOfCoincidence(t)))
+	theBestGursKeyValue := math.Abs(languageIc - float64(languagetools.IndexOfCoincidence(t)))
 
 	for k, _ := range posibleKeyLengths {
 		t := getNstring(textSecret, 0, k)
 		ic := languagetools.IndexOfCoincidence(t)
 		fmt.Println("Key length: ", k, "IC: ", ic)
-		if (englishIc - float64(ic)) < theBestGursKeyValue {
+		if (languageIc - float64(ic)) < theBestGursKeyValue {
 			theBestGuseKeyLength = k
-			theBestGursKeyValue = math.Abs(englishIc - float64(ic))
+			theBestGursKeyValue = math.Abs(languageIc - float64(ic))
 		}
 	}
+	return theBestGuseKeyLength, theBestGursKeyValue
+}
+
+func Crack(textSecret string, realQuadgrams map[string]float64, alphabetNormalProb []languagetools.Alphabet, alphabets []string) {
+	//TODO: crack viniger cipher
+	// 1. find key length
+	// 2. frequency analysis
+	// textSecret = "PPQCAXQVEKGYBNKMAZUYBNGBALJONITSZMJYIMVRAGVOHTVRAUCTKSGDDWUOXITLAZUVAVVRAZCVKBQPIWPOU"
+	englishIc := 0.0667
+	posibleKeyLengths := findKeyLengths(textSecret)
+	fmt.Println("Possible key lengths: ", posibleKeyLengths)
+	theBestGuseKeyLength, theBestGursKeyValue := findBestKeyLength(textSecret, posibleKeyLengths, englishIc)
 	fmt.Println("Best key length: ", theBestGuseKeyLength, " with score: ", theBestGursKeyValue)
+
 	key := ""
 	for i := 0; i < theBestGuseKeyLength; i++ {
 		t := getNstring(textSecret, i, theBestGuseKeyLength)
@@ -253,7 +254,6 @@ func Crack(textSecret string, realQuadgrams map[string]float64, alphabetNormalPr
 		}
 	}
 	fmt.Println("Best key length: ", theBestGuseKeyLength, " with score: ", theBestGursKeyValue)
-	fmt.Println("Best key by freq alan:", key)
 	bestKey := findLocalMaximum(key, textSecret, realQuadgrams, alphabets)
 	fmt.Println("Best key by local max:", bestKey)
 }

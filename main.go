@@ -126,7 +126,8 @@ func main() {
 	if len(os.Args) > 1 && os.Args[1] == "-m" {
 		fmt.Println(message)
 	} else {
-		vigener(message)
+		// vigener(message)
+		cesarTest(message)
 	}
 
 }

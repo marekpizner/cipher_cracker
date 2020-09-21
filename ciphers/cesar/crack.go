@@ -5,16 +5,16 @@ import (
 	"regexp/syntax"
 )
 
-func containEnglisWords(try_spaces []string) bool {
-	total_perc := len(try_spaces)
-	accuracy_perc := 0
+func containEnglisWords(trySpaces []string) bool {
+	totalPerc := len(trySpaces)
+	accuracyPerc := 0
 
-	for _, word := range try_spaces {
+	for _, word := range trySpaces {
 		if syntax.IsWordChar([]rune(word)[0]) {
-			accuracy_perc += 1
+			accuracyPerc++
 		}
 	}
-	percentage := float32(accuracy_perc) / float32(total_perc)
+	percentage := float32(accuracyPerc) / float32(totalPerc)
 	if percentage > 0.8 {
 		return true
 	}
@@ -26,9 +26,7 @@ func Crack(text string) {
 
 	for i := 1; i < 27; i++ {
 		try := Decrypt(text, i)
-		// try_spaces := strings.Split(try, " ")
 		fmt.Println(try)
-
 	}
 
 }

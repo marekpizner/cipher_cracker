@@ -1,25 +1,23 @@
 package cesar
 
-const ALPHABETSTART = 32
-const ALPHABETEND = 126
+const ALPHABETSTART = 97
+const ALPHABETEND = 122
 
-func shiftEncrypt(char rune, shift int) string {
-	ascii := int(char)
-	ascii += shift
+func shiftEncrypt(char rune, shift int) rune {
+	ascii := int(char) + shift
 
-	if ascii <= ALPHABETEND {
-		return string(ascii)
+	if ascii > ALPHABETEND {
+		return rune(ALPHABETSTART + (ascii - ALPHABETEND) - 1)
 	}
 
-	ascii -= ALPHABETEND
-	return string(ascii)
+	return rune(ascii)
 }
 
 func Encrypt(text string, shift int) string {
 	newText := ""
 	for _, char := range text {
 		newCharacter := shiftEncrypt(char, shift)
-		newText += newCharacter
+		newText += string(newCharacter)
 	}
 	return newText
 }

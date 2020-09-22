@@ -24,5 +24,10 @@ func TestShiftDecrypt(t *testing.T) {
 }
 
 func TestDecrypt(t *testing.T) {
+	enc := "sri qsvrmrk alir kviksv weqwe asoi"
+	dec := "one morning when gregor samsa woke"
 
+	if Decrypt(enc, 4) != dec {
+		t.Errorf("Error cesar cipher decrypting %s", enc)
+	}
 }

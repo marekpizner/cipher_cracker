@@ -21,3 +21,12 @@ func TestShiftEncrypt(t *testing.T) {
 		t.Errorf("Error cesar cipher shifting b %c", newChar)
 	}
 }
+
+func TestEncrypt(t *testing.T) {
+	enc := "sri qsvrmrk alir kviksv weqwe asoi"
+	dec := "one morning when gregor samsa woke"
+
+	if Encrypt(dec, 4) != enc {
+		t.Errorf("Error cesar cipher decrypting %s", dec)
+	}
+}

@@ -1,5 +1,7 @@
 package cesar
 
+import "unicode"
+
 const ALPHABETSTART = 97
 const ALPHABETEND = 122
 
@@ -16,6 +18,10 @@ func shiftEncrypt(char rune, shift int) rune {
 func Encrypt(text string, shift int) string {
 	newText := ""
 	for _, char := range text {
+		if unicode.IsSpace(char) {
+			newText += " "
+			continue
+		}
 		newCharacter := shiftEncrypt(char, shift)
 		newText += string(newCharacter)
 	}

@@ -1,5 +1,7 @@
 package cesar
 
+import "unicode"
+
 func shiftDecrypt(char rune, shift int) rune {
 	ascii := int(char) - shift
 
@@ -13,6 +15,10 @@ func shiftDecrypt(char rune, shift int) rune {
 func Decrypt(text string, shift int) string {
 	newText := ""
 	for _, char := range text {
+		if unicode.IsSpace(char) {
+			newText += " "
+			continue
+		}
 		newCharacter := shiftDecrypt(char, shift)
 		newText += string(newCharacter)
 	}

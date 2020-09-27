@@ -1,2 +1,2 @@
 # Cipher cracker
-This program can crack multiple ciphers (Cesar, Monoalphabetic, Vigener).
+This program can crack multiple ciphers (Cesar, Monoalphabetic, Vigenere).
